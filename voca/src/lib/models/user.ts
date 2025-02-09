@@ -3,7 +3,7 @@ import mongoose from 'mongoose';
 const schema = new mongoose.Schema<User>(
     {
         email: { type: String, required: true, unique: true},
-        level: { type: Number, required: true, default: 0 },
+        level: { type: Number, required: true, default: 1 },
         cnt: { type: Number, requierd: true, default: 0 },
     },
     {

@@ -71,7 +71,6 @@
 { "word": "sophisticated", "meaning": "정교한", "level": 9, "pronunciation": "서피스티케이티드", "example": "The equipment is *sophisticated* yet user-friendly.", "translation": "그 장비는 *정교하면서도* 사용이 간편합니다." }
 { "word": "transcendent", "meaning": "초월적인", "level": 10, "pronunciation": "트랜센던트", "example": "Her music was described as having a *transcendent* beauty.", "translation": "그녀의 음악은 *초월적인* 아름다움을 가지고 있다고 묘사되었습니다." }
 { "word": "analyze", "meaning": "분석하다", "level": 4, "pronunciation": "애널라이즈", "example": "The software can *analyze* large datasets quickly.", "translation": "그 소프트웨어는 대량의 데이터를 빠르게 *분석할* 수 있습니다." }
-{ "word": "interpret", "meaning": "해석하다", "level": 4, "pronunciation": "인터프리트", "example": "It's crucial to correctly *interpret* the author's message.", "translation": "작가의 메시지를 정확히 *해석하는* 것이 중요합니다." }
 { "word": "integrate", "meaning": "통합하다", "level": 5, "pronunciation": "인티그레이트", "example": "We need to *integrate* all the different components into a single system.", "translation": "우리는 모든 다양한 구성 요소들을 하나의 시스템으로 *통합해야* 합니다." }
 { "word": "propose", "meaning": "제안하다", "level": 5, "pronunciation": "프로포즈", "example": "She will *propose* a new strategy in the meeting.", "translation": "그녀는 회의에서 새로운 전략을 *제안할* 것입니다." }
 { "word": "collaborate", "meaning": "협력하다", "level": 6, "pronunciation": "컬래버레이트", "example": "Researchers from different countries frequently *collaborate* on scientific projects.", "translation": "다양한 국가의 연구자들이 과학 프로젝트에서 자주 *협력합니다*." }

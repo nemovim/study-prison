@@ -127,7 +127,13 @@ export default class QuizMachine {
         let lastLevel: number;
 
         if (lastQuiz === undefined) {
-            lastLevel = 0;
+            lastLevel = this.#vocaArr.reduce((prev, voca) => {
+                if (voca.level < prev) {
+                    return voca.level;
+                } else {
+                    return prev;
+                }
+            }, 10);
             result = true;
         } else {
             lastLevel = lastQuiz.level;

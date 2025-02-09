@@ -4,7 +4,7 @@
 
     const { reviewArr, vocaArr, isLevelTest } = $props();
 
-    $inspect(reviewArr, vocaArr);
+    // $inspect(reviewArr, vocaArr);
 
     const quizMachine = new QuizMachine();
 
@@ -14,6 +14,7 @@
     let lastAnswer = $state<string>('');
     let answerArr = $state<string[]>();
     let isSolving = $state<boolean>(false);
+    let isWating = $state<boolean>(false);
     let quizEnds = $state<boolean>(false);
     let idx = $state<number>();
 
@@ -31,11 +32,13 @@
         );
     });
 
-    function showAnswer() {
-        isCorrectAnswer = false;
-        quizMachine.guessWrongAnswer();
-        answerArr = quizMachine.getAnswerArr();
+    async function showAnswer() {
+        isWating = true;
         isSolving = false;
+        isCorrectAnswer = false;
+        answerArr = quizMachine.getAnswerArr();
+        await quizMachine.guessWrongAnswer();
+        isWating = false;
     }
 
     function nextQuiz() {
@@ -56,29 +59,41 @@
         isSolving = true;
         isCorrectAnswer = true;
         idx = quizMachine.idx + 1;
-        console.log(quizMachine.getQuizArr());
+        // console.log(quizMachine.getQuizArr());
     }
 
-    function checkAnswer() {
+    async function checkAnswer() {
         if ((isCorrectAnswer = quizMachine.isCorrectAnswer(userAnswer))) {
-            quizMachine.guessCorrectAnswer();
-            quizEnds = quizMachine.quizEnds();
+            if (!isLevelTest) {
+                quizEnds = quizMachine.quizEnds();
+            }
             answerArr = quizMachine.getAnswerArr();
             isSolving = false;
+            await quizMachine.guessCorrectAnswer();
         }
         lastAnswer = userAnswer;
         userAnswer = '';
     }
 
+    function returnToMain() {
+        window.location.href = '/';
+    }
+
     onMount(() => {
+        console.log(reviewArr);
+        console.log(vocaArr);
         quizMachine.init(reviewArr, vocaArr);
         nextQuiz();
-        window.onkeydown = (e) => {
+        window.onkeydown = async (e) => {
             if (e.key == 'Enter') {
-                if (isSolving) {
-                    checkAnswer();
-                } else if (!quizEnds) {
-                    nextQuiz();
+                if (!isWating) {
+                    isWating = true;
+                    if (isSolving) {
+                        await checkAnswer();
+                    } else if (!quizEnds) {
+                        nextQuiz();
+                    }
+                    isWating = false;
                 }
             }
         };
@@ -104,7 +119,7 @@
             {#if !isCorrectAnswer}
                 <p><span style:color="red">{lastAnswer}</span> 오답입니다.</p>
             {/if}
-            <button onclick={showAnswer} id="pass-btn">PASS</button>
+            <button onclick={showAnswer} id="pass-btn">정답 보기</button>
         {:else if !isSolving}
             <p>
                 정답: <span
@@ -118,13 +133,22 @@
                 >&nbsp;&nbsp;&nbsp;&nbsp;[{quiz.pronunciation}]
             </p>
 
-            {#if !quizEnds}
-                <button onclick={nextQuiz} id="next-btn">NEXT</button>
-            {:else}
-                <a href="/" id="return-btn">돌아가기</a>
+            {#if !isWating}
+                {#if !quizEnds}
+                    <button onclick={nextQuiz} id="next-btn">다음</button>
+                {:else}
+                    <!-- <a href="/" id="return-btn">돌아가기</a> -->
+                    <button id="return-btn" onclick={returnToMain}
+                        >돌아가기</button
+                    >
+                {/if}
+                {:else}
+                <button id="loading-btn">로딩중</button>
             {/if}
         {/if}
     </div>
+{:else if quizEnds}
+    <p>더 이상 외울 단어가 없습니다.</p>
 {/if}
 
 <style lang="scss">
@@ -177,18 +201,19 @@
         }
     }
 
-    #return-btn {
-        color: black;
-        text-decoration: none;
-        width: fit-content;
-    }
+    // #return-btn {
+    //     color: black;
+    //     text-decoration: none;
+    //     width: fit-content;
+    // }
 
     #pass-btn,
     #next-btn,
-    #return-btn {
-        font-size: 3rem;
+    #return-btn,
+    #loading-btn {
+        font-size: 2.2rem;
         font-weight: bold;
-        padding: 0.8rem 2rem;
+        padding: 0.4rem 1.6rem;
         border: none;
         font-family: SunBatang-Light;
         /* background-color: rgb(255, 240, 240); */

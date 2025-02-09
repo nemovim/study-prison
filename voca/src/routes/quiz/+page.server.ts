@@ -2,9 +2,9 @@ import GeneralManager from '$lib/server/generalManager';
 import type { Actions } from './$types';
 
 export async function load({ locals, parent }) {
-    if (locals.user.level === 0) {
+    if (locals.user.cnt < 20) {
         // First Quiz == New User
-        const levelTest = await GeneralManager.getLevelTest();
+        const levelTest = await GeneralManager.getLevelTest(locals.user);
         return {
             reviewArr: JSON.stringify(levelTest.reviewArr),
             vocaArr: JSON.stringify(levelTest.vocaArr),

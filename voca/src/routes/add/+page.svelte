@@ -79,11 +79,6 @@
         border-bottom: 0.1rem solid red;
     }
 
-    form {
-        /* display: flex;
-        flex-direction: column; */
-    }
-
     form > div {
         margin: 1.2rem 0;
         padding-bottom: 0.6rem;
