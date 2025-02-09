@@ -139,6 +139,7 @@ export default class QuizMachine {
             lastLevel = lastQuiz.level;
             this.#quizArr.splice(this.idx, 1);
             this.#answerArr.splice(this.idx, 1);
+            this.#vocaArr.splice(this.idx, 1);
         }
 
         let nextQuiz: Quiz | null = null;

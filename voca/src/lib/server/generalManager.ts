@@ -111,9 +111,7 @@ export default class GeneralManager {
         }
         // console.log(voca.oxArr);
 
-        await Promise.allSettled([UserManager.updateUser(user), VocaManager.updateVoca(voca)]);
-
-        return true;
+        return await Promise.allSettled([UserManager.updateUser(user), VocaManager.updateVoca(voca)]);
     }
 
     static getUpdatedLevel(level: number, newLevel: number, cnt: number) {
