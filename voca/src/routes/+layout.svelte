@@ -1,5 +1,19 @@
-<script>
+<script lang="ts">
+    import { afterNavigate, beforeNavigate } from '$app/navigation';
+    import { setContext } from 'svelte';
+
     let { children } = $props();
+
+    let pageIdx = $state<{idx: number}>({idx:1});
+    setContext('pageIdx', pageIdx);
+
+    let isLoading = $state<boolean>(false);
+    beforeNavigate(() => {
+        isLoading = true;
+    });
+    afterNavigate(() => {
+        isLoading = false;
+    });
 </script>
 
 <section>
@@ -7,19 +21,24 @@
 
     <div>
         <nav>
-            <a href="/" class="container">메인</a>
-            <a href="/quiz" class="container">외우기</a>
-            <a href="/add" class="container">추가하기</a>
+            <a href="/" class={pageIdx.idx === 1 ? 'chosenPage' : ''}>메인</a>
+            <a href="/quiz" class={pageIdx.idx === 2 ? 'chosenPage' : ''}>외우기</a>
+            <a href="/add" class={pageIdx.idx === 3 ? 'chosenPage' : ''}>추가하기</a>
         </nav>
 
-        <article class="container">
-            {@render children()}
-        </article>
-
+        {#if isLoading}
+            <article class="container">
+                <p>Loading...</p>
+            </article>
+        {:else}
+            <article class="container">
+                {@render children()}
+            </article>
+        {/if}
     </div>
 </section>
 
-<style>
+<style lang="scss">
     section {
         margin: 3rem;
         display: flex;
@@ -33,10 +52,10 @@
         margin-bottom: 5rem;
         margin-top: 5rem;
         text-shadow: 0 0.5rem 0.5rem rgb(200, 200, 200);
-    }
 
-    h1 > span {
-        text-shadow: 0 0.5rem 0.5rem rgb(255, 200, 200);
+        span {
+            text-shadow: 0 0.5rem 0.5rem rgb(255, 200, 200);
+        }
     }
 
     div {
@@ -52,15 +71,21 @@
     nav > a {
         margin: 0;
         font-weight: bold;
-        border-radius: 1rem 1rem 0 0 ;
+        border-radius: 1rem 1rem 0 0;
         display: inline-block;
         /* border: .3rem black outset; */
-        /* box-shadow: 0 .4rem 1rem .0rem rgb(200, 200, 200); */
+        box-shadow: 0 .5rem 1rem .0rem rgb(200, 200, 200);
         padding: 1.2rem 2.4rem;
+        padding-bottom: 2.2rem;
         font-size: 2rem;
         text-decoration: none;
         color: black;
         background-color: rgb(255, 255, 210);
+        bottom: -1rem;
+
+        &.chosenPage {
+            bottom: 0rem;
+        }
     }
 
     nav > a:first-child {

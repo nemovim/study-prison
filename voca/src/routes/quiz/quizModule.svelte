@@ -17,6 +17,8 @@
     let isWating = $state<boolean>(false);
     let quizEnds = $state<boolean>(false);
     let idx = $state<number>();
+    let reviewCnt = $state<number | null>(null);
+    let nextReview = $state<string | null>(null);
 
     let quizTranslation = $state<string>();
     let quizExample = $state<string>();
@@ -36,8 +38,11 @@
         isWating = true;
         isSolving = false;
         isCorrectAnswer = false;
+        userAnswer = '';
         answerArr = quizMachine.getAnswerArr();
         await quizMachine.guessWrongAnswer();
+        nextReview = quizMachine.getReviewDateName();
+        reviewCnt = null;
         isWating = false;
     }
 
@@ -56,6 +61,8 @@
         } else {
             quiz = quizMachine.getNextQuiz();
         }
+        reviewCnt = quizMachine.getReview().reviewCnt;
+        nextReview = null;
         isSolving = true;
         isCorrectAnswer = true;
         idx = quizMachine.idx + 1;
@@ -64,12 +71,14 @@
 
     async function checkAnswer() {
         if ((isCorrectAnswer = quizMachine.isCorrectAnswer(userAnswer))) {
+            isSolving = false;
             if (!isLevelTest) {
                 quizEnds = quizMachine.quizEnds();
             }
             answerArr = quizMachine.getAnswerArr();
-            isSolving = false;
             await quizMachine.guessCorrectAnswer();
+            nextReview = quizMachine.getReviewDateName();
+            reviewCnt = null;
         }
         lastAnswer = userAnswer;
         userAnswer = '';
@@ -103,7 +112,22 @@
 {#if quiz !== undefined}
     <div id="quiz-info-div">
         <p>No. {idx}</p>
-        <p>Level {Math.round(quiz.level * 100) / 100}</p>
+        <div id="tags-div">
+            {#if !isLevelTest}
+                {#if reviewCnt}
+                    {#if reviewCnt === -1}
+                        <p class="tag">새로운 단어</p>
+                    {:else}
+                        <p class="tag">{reviewCnt}번째 복습</p>
+                    {/if}
+                {/if}
+                <p class="tag {nextReview ? '' : 'hidden'}">
+                    {nextReview} 뒤 복습
+                </p>
+            {/if}
+
+            <p class="tag">Level {Math.round(quiz.level * 100) / 100}</p>
+        </div>
     </div>
 
     <p>{@html quizExample}</p>
@@ -137,12 +161,11 @@
                 {#if !quizEnds}
                     <button onclick={nextQuiz} id="next-btn">다음</button>
                 {:else}
-                    <!-- <a href="/" id="return-btn">돌아가기</a> -->
                     <button id="return-btn" onclick={returnToMain}
                         >돌아가기</button
                     >
                 {/if}
-                {:else}
+            {:else}
                 <button id="loading-btn">로딩중</button>
             {/if}
         {/if}
@@ -201,12 +224,6 @@
         }
     }
 
-    // #return-btn {
-    //     color: black;
-    //     text-decoration: none;
-    //     width: fit-content;
-    // }
-
     #pass-btn,
     #next-btn,
     #return-btn,
@@ -218,10 +235,28 @@
         font-family: SunBatang-Light;
         /* background-color: rgb(255, 240, 240); */
         background-color: rgb(255, 255, 200);
-        box-shadow: 0 0.5rem 0.5rem rgb(220, 220, 220);
+        box-shadow: 0 0.3rem 0.5rem rgb(220, 220, 220);
 
         &:hover {
             background-color: rgb(245, 245, 200);
         }
+    }
+
+    #tags-div {
+        display: flex;
+    }
+
+    .tag {
+        font-size: 1.8rem;
+        font-weight: bold;
+        padding: 0.4rem 1.6rem;
+        border: none;
+        font-family: SunBatang-Light;
+        /* background-color: rgb(255, 240, 240); */
+        background-color: rgb(235, 235, 255);
+        box-shadow: 0 0.3rem 0.5rem rgb(220, 220, 220);
+        margin: 0 0.5rem;
+        position: relative;
+        top: -0.5rem;
     }
 </style>

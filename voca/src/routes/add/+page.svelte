@@ -1,11 +1,15 @@
 <script lang="ts">
     import { enhance } from '$app/forms';
+    import { getContext } from 'svelte';
     import Info from '../info.svelte';
 
     const { data, form } = $props();
     const user = $derived(JSON.parse(data.user));
     let voca = $derived(JSON.parse(form?.voca || '{}'));
     let isCreating = $state<boolean>(false);
+
+    let pageIdx: {idx: number} = getContext('pageIdx');
+    pageIdx.idx = 3;
 </script>
 
 <Info {user} />
@@ -25,7 +29,8 @@
         >
             <div>
                 <label for="word-input">영단어: </label>
-                <input type="text" name="word" id="word-input" />
+                <!-- svelte-ignore a11y_autofocus -->
+                <input type="text" name="word" id="word-input" autofocus/>
             </div>
             <div>
                 <label for="meaning-input">한국어 뜻: </label>

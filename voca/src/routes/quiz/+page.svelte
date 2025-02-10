@@ -1,4 +1,6 @@
 <script lang="ts">
+    import { beforeNavigate } from '$app/navigation';
+    import { getContext } from 'svelte';
     import Info from '../info.svelte';
     import QuizModule from './quizModule.svelte';
 
@@ -10,6 +12,8 @@
     const vocaArr = JSON.parse(data.vocaArr);
     const isLevelTest = data.isLevelTest;
 
+    let pageIdx: {idx: number} = getContext('pageIdx');
+    pageIdx.idx = 2;
 
 </script>
 

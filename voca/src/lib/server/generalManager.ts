@@ -19,7 +19,7 @@ export default class GeneralManager {
         const vocaMap: Map<string, Voca> = new Map();
 
         for (let i = user.level; i <= 10; i++) {
-            (await VocaManager.getNewRandomVocaByLevel(i, 3, vocaIdArr)).forEach(voca => {
+            (await VocaManager.getNewRandomVocaByLevel(i, 5, vocaIdArr)).forEach(voca => {
                 if (!vocaMap.has(String(voca._id))) {
                     vocaMap.set(String(voca._id), voca);
                 }
@@ -83,7 +83,7 @@ export default class GeneralManager {
                 }
                 voca.oxArr[0] += 1;
                 user.cnt += 1;
-            } else if (updatedReview.reviewCnt >= 4) {
+            } else if (updatedReview.reviewCnt >= 5) {
                 if (user.level < voca.level) {
                     user.level = this.getUpdatedLevel(user.level, voca.level, user.cnt);
                 }
@@ -100,7 +100,7 @@ export default class GeneralManager {
                     voca.level = this.getUpdatedLevel(voca.level, user.level, vocaCnt);
                 }
                 voca.oxArr[1] += 1;
-            } else if (updatedReview.reviewCnt >= 4) {
+            } else if (updatedReview.reviewCnt >= 5) {
                 if (user.level > voca.level) {
                     user.level = this.getUpdatedLevel(user.level, voca.level, user.cnt);
                 }

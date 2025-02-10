@@ -1,4 +1,4 @@
-import { shuffleArr } from '$lib/utils/utils';
+import { shuffleArr, reviewDeltaNameMap } from '$lib/utils/utils';
 
 export default class QuizMachine {
     #vocaArr: Voca[] = [];
@@ -61,6 +61,15 @@ export default class QuizMachine {
         }
     }
 
+    getReview(): Review {
+        return this.#reviewMap.get(this.#vocaArr[this.idx]._id) as Review;
+    }
+
+    getReviewDateName(): string {
+        const review = this.getReview();
+        return reviewDeltaNameMap.get(review.reviewCnt) as string;
+    }
+
     getAnswerArr(): string[] {
         return this.#answerArr[this.idx];
     }
@@ -85,7 +94,7 @@ export default class QuizMachine {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                review: this.#reviewMap.get(this.#vocaArr[this.idx]._id),
+                review: this.getReview(),
                 result: true,
             })
         })
@@ -100,7 +109,7 @@ export default class QuizMachine {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                review: this.#reviewMap.get(this.#vocaArr[this.idx]._id),
+                review: this.getReview(),
                 result: false,
             })
         });
