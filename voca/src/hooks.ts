@@ -1,1 +1,0 @@
-import '$lib/style/main.css';

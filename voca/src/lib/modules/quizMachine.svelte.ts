@@ -6,7 +6,7 @@ export default class QuizMachine {
     #answerArr: string[][] = [];
     #wrongVocaArr: Voca[] = [];
     #quizArr: Quiz[] = [];
-    idx: number = -1;
+    idx = $state<number>(-1);
 
     constructor() {
     }
@@ -40,6 +40,7 @@ export default class QuizMachine {
             translation: parsed_translation,
             level: voca['level'],
             pronunciation: voca['pronunciation'],
+            meaning: voca['meaning'],
         };
     }
 
@@ -68,6 +69,17 @@ export default class QuizMachine {
     getReviewDateName(): string {
         const review = this.getReview();
         return reviewDeltaNameMap.get(review.reviewCnt) as string;
+    }
+
+    getOXRate(): number {
+        const voca = this.#vocaArr[this.idx];
+        const sum = voca.oxArr[0] + voca.oxArr[1];
+        if (sum === 0) {
+            return 0;
+        } else {
+            return voca.oxArr[0]/sum*100;
+        }
+
     }
 
     getAnswerArr(): string[] {

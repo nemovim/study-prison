@@ -13,12 +13,12 @@ export const actions = {
         const overwrite: boolean = !!formData.get('overwrite');
         try {
             const voca = await VocaManager.addVocaByWordAndMeaning(word, meaning, overwrite);
-            return { success: true, voca: JSON.stringify(voca)};
+            return { success: true, voca: JSON.stringify(voca) };
         } catch (e) {
             if (e instanceof Error) {
-                return { success: false, error: e.message};
+                return { success: false, error: e.message };
             } else {
-                return { success: false, error: String(e)};
+                return { success: false, error: String(e) };
             }
         }
     }

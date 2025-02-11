@@ -12,7 +12,7 @@ export const init: ServerInit = async () => {
 
 const authorizationHandle: Handle = async ({ event, resolve }) => {
 	const session = await event.locals.auth();
-    // console.log(session?.user);
+	// console.log(session?.user);
 
 	if (session) {
 		if (session?.user?.email !== undefined) {
@@ -25,11 +25,11 @@ const authorizationHandle: Handle = async ({ event, resolve }) => {
 			}
 
 		}
-    } else {
-        redirect(303, '/auth/signin');
+	} else {
+		redirect(303, '/auth/signin');
 	}
 
-    const response = await resolve(event);
+	const response = await resolve(event);
 	return response;
 };
 

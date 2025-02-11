@@ -1,4 +1,5 @@
 import review from '$lib/models/review';
+import user from '$lib/models/user';
 import ReviewManager from './reviewManager';
 import UserManager from './userManager';
 import VocaManager from './vocaManager';
@@ -14,7 +15,7 @@ export default class GeneralManager {
     }
 
     static async getLevelTest(user: User): Promise<{ reviewArr: Review[], vocaArr: Voca[] }> {
-        const reviewArr = await ReviewManager.getAllReviewByEmail(user.email);
+        const reviewArr = await ReviewManager.getAllReviewsByEmail(user.email);
         const vocaIdArr = reviewArr.map((review) => review.vocaId);
         const vocaMap: Map<string, Voca> = new Map();
 
@@ -34,9 +35,13 @@ export default class GeneralManager {
         return { reviewArr: levelTestReviewArr, vocaArr };
     }
 
+    static async getAllReviewsByEmail(email: string): Promise<Review[]> {
+        return await ReviewManager.getAllReviewsByEmail(email);
+    }
+
     static async getReviewArrByUser(user: User, cnt: number = 1): Promise<Review[]> {
-        const reviewArr = await ReviewManager.getAllReviewByEmail(user.email);
-        const nowReviewArr = reviewArr.filter(review => ((review.reviewDate)) < new Date().getTime());
+        const reviewArr = await ReviewManager.getAllReviewsByEmail(user.email);
+        const nowReviewArr = reviewArr.filter(review => (new Date(review.reviewDate)) <= new Date());
 
         if (nowReviewArr.length >= cnt) {
             return nowReviewArr;

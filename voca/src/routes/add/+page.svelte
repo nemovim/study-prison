@@ -8,7 +8,7 @@
     let voca = $derived(JSON.parse(form?.voca || '{}'));
     let isCreating = $state<boolean>(false);
 
-    let pageIdx: {idx: number} = getContext('pageIdx');
+    let pageIdx: { idx: number } = getContext('pageIdx');
     pageIdx.idx = 3;
 </script>
 
@@ -30,7 +30,7 @@
             <div>
                 <label for="word-input">영단어: </label>
                 <!-- svelte-ignore a11y_autofocus -->
-                <input type="text" name="word" id="word-input" autofocus/>
+                <input type="text" name="word" id="word-input" autofocus />
             </div>
             <div>
                 <label for="meaning-input">한국어 뜻: </label>
@@ -44,7 +44,9 @@
                     id="overwrite-checkbox"
                 />
             </div>
-            <button>추가</button>
+            {#if !isCreating}
+                <button>추가</button>
+            {/if}
         </form>
     </div>
     <div>
@@ -64,7 +66,6 @@
 </article>
 
 <style>
-
     article {
         display: flex;
         border-bottom: 0.15rem solid black;

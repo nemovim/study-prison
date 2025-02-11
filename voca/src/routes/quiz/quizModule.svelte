@@ -1,5 +1,5 @@
 <script lang="ts">
-    import QuizMachine from '$lib/modules/quizMachine.js';
+    import QuizMachine from '$lib/modules/quizMachine.svelte.js';
     import { onMount } from 'svelte';
 
     const { reviewArr, vocaArr, isLevelTest } = $props();
@@ -19,20 +19,20 @@
     let idx = $state<number>();
     let reviewCnt = $state<number | null>(null);
     let nextReview = $state<string | null>(null);
+    let oxRate = $state<number>(0);
 
-    let quizTranslation = $state<string>();
-    let quizExample = $state<string>();
-
-    $effect(() => {
-        quizTranslation = quiz?.translation.replace(
+    let quizTranslation = $derived<string>(
+        quiz?.translation.replace(
             /"(.+?)"/,
-            '<span class="highlight">$1</span>'
-        );
-        quizExample = quiz?.example.replace(
+            `<span class="highlight">$1<span>${quiz?.meaning || ''}</span></span>`
+        ) || ''
+    );
+    let quizExample = $derived<string>(
+        quiz?.example.replace(
             /(______)/,
             '[<span class="highlight">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>]'
-        );
-    });
+        ) || ''
+    );
 
     async function showAnswer() {
         isWating = true;
@@ -47,6 +47,7 @@
     }
 
     function nextQuiz() {
+        isWating = true;
         if (isLevelTest) {
             const temp: Quiz | null = quizMachine.getNextQuizForLevelTest(
                 quiz,
@@ -62,14 +63,17 @@
             quiz = quizMachine.getNextQuiz();
         }
         reviewCnt = quizMachine.getReview().reviewCnt;
+        oxRate = quizMachine.getOXRate();
         nextReview = null;
         isSolving = true;
         isCorrectAnswer = true;
         idx = quizMachine.idx + 1;
+        isWating = false;
         // console.log(quizMachine.getQuizArr());
     }
 
     async function checkAnswer() {
+        isWating = true;
         if ((isCorrectAnswer = quizMachine.isCorrectAnswer(userAnswer))) {
             isSolving = false;
             if (!isLevelTest) {
@@ -82,6 +86,7 @@
         }
         lastAnswer = userAnswer;
         userAnswer = '';
+        isWating = false;
     }
 
     function returnToMain() {
@@ -96,13 +101,11 @@
         window.onkeydown = async (e) => {
             if (e.key == 'Enter') {
                 if (!isWating) {
-                    isWating = true;
                     if (isSolving) {
                         await checkAnswer();
                     } else if (!quizEnds) {
                         nextQuiz();
                     }
-                    isWating = false;
                 }
             }
         };
@@ -114,9 +117,11 @@
         <p>No. {idx}</p>
         <div id="tags-div">
             {#if !isLevelTest}
-                {#if reviewCnt}
+                {#if reviewCnt != null}
                     {#if reviewCnt === -1}
                         <p class="tag">새로운 단어</p>
+                    {:else if reviewCnt === 0}
+                        <p class="tag">방금 틀린 단어</p>
                     {:else}
                         <p class="tag">{reviewCnt}번째 복습</p>
                     {/if}
@@ -125,6 +130,9 @@
                     {nextReview} 뒤 복습
                 </p>
             {/if}
+            <p class="tag">
+                정답률: {Math.round(oxRate * 100) / 100}%
+            </p>
 
             <p class="tag">Level {Math.round(quiz.level * 100) / 100}</p>
         </div>
@@ -161,9 +169,12 @@
                 {#if !quizEnds}
                     <button onclick={nextQuiz} id="next-btn">다음</button>
                 {:else}
-                    <button id="return-btn" onclick={returnToMain}
-                        >돌아가기</button
+                    <a data-sveltekit-reload href="/" id="return-btn"
+                        >돌아가기</a
                     >
+                    <!-- <button id="return-btn" onclick={returnToMain}
+                        >돌아가기</button
+                    > -->
                 {/if}
             {:else}
                 <button id="loading-btn">로딩중</button>
@@ -190,6 +201,16 @@
         /* border-radius: .5rem; */
         font-weight: bold;
         padding: 0.2rem 0.5rem;
+        position: relative;
+
+        :global(span) {
+            font-size: 1.5rem;
+            width: 100%;
+            left: 0;
+            text-align: center;
+            top: -1.5rem;
+            position: absolute;
+        }
     }
 
     #answer-div {

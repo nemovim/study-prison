@@ -5,20 +5,45 @@
 
     const { data } = $props();
     const user: User = $derived(JSON.parse(data.user));
+    const reviewArr: Review[] = $derived(JSON.parse(data.reviewArr));
+    $inspect(reviewArr);
+    const toReviewCnt: number = $derived(
+        reviewArr.reduce(
+            (prev, review) =>
+                new Date(review.reviewDate) <= new Date() ? prev + 1 : prev,
+            0
+        )
+    );
+    const reviewingCnt: number = $derived(
+        reviewArr.reduce(
+            (prev, review) => (review.reviewCnt <= 4 ? prev + 1 : prev),
+            0
+        )
+    );
+    const memorizedCnt: number = $derived(
+        reviewArr.reduce(
+            (prev, review) => (review.reviewCnt > 4 ? prev + 1 : prev),
+            0
+        )
+    );
 
-    let pageIdx: {idx: number} = getContext('pageIdx');
+    let pageIdx: { idx: number } = getContext('pageIdx');
     pageIdx.idx = 1;
 </script>
 
 <Info {user} />
-<p>현재 어휘 수준은 <b>{Math.round(user.level * 100) / 100}</b>이며,</p>
-<p>지금까지 <b>{user.cnt}</b>개의 영단어를 외웠습니다.</p>
+<p>
+    현재 어휘 수준은 <b>{Math.round(user.level * 100) / 100}</b>이며, 총
+    <b>{reviewArr.length}</b>개의 영단어를 공부했습니다.
+</p>
+<p>•<b>{toReviewCnt}</b>개의 영단어가 복습이 필요하며,</p>
+<p>•<b>{reviewingCnt}</b>개의 영단어를 외워가는 중이며,</p>
+<p>•<b>{memorizedCnt}</b>개의 영단어를 암기했습니다.</p>
 {#if user.cnt < 20}
     <p style:color="green">(레벨 테스트 진행 중)</p>
 {/if}
 <div>
-<button onclick={() => signOut()}>로그아웃</button>
-
+    <button onclick={() => signOut()}>로그아웃</button>
 </div>
 <p id="lastline-p"></p>
 
@@ -26,7 +51,12 @@
     #lastline-p {
         border-bottom: 0.15rem solid black;
         margin-bottom: 1rem;
-        padding-bottom: 1rem;
+    }
+
+    div {
+        display: flex;
+        justify-content: right;
+        align-items: center;
     }
 
     button {

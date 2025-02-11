@@ -15,12 +15,13 @@ interface Quiz {
     translation: string,
     level: number,
     pronunciation: string,
+    meaning: string,
 }
 
 interface Review {
     vocaId: string,
     reviewCnt: number,
-    reviewDate: number,
+    reviewDate: Date,
 }
 
 type ResultMap = Map<string, boolean>;

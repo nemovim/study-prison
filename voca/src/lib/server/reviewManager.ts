@@ -8,7 +8,7 @@ export default class ReviewManager {
         return await review.save();
     }
 
-    static async getAllReviewByEmail(email: string): Promise<Review[]> {
+    static async getAllReviewsByEmail(email: string): Promise<Review[]> {
         const data = await ReviewModel.findOne({ email }).sort({ 'vocaArr.reviewDate': 1 });
         if (data == null) {
             return [];
@@ -22,7 +22,7 @@ export default class ReviewManager {
         const review: Review = {
             vocaId,
             reviewCnt: -1,
-            reviewDate: -1,
+            reviewDate: new Date(0),
         };
         return review;
     }
@@ -43,7 +43,7 @@ export default class ReviewManager {
             review.reviewCnt = 0;
         }
 
-        review.reviewDate = new Date().getTime() + 1000*(reviewDeltaSecMap.get(review.reviewCnt) || 0);
+        review.reviewDate = new Date(new Date().getTime() + 1000*(reviewDeltaSecMap.get(review.reviewCnt) || 0));
 
         return review;
     }

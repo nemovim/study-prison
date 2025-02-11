@@ -12,16 +12,15 @@
     const vocaArr = JSON.parse(data.vocaArr);
     const isLevelTest = data.isLevelTest;
 
-    let pageIdx: {idx: number} = getContext('pageIdx');
+    let pageIdx: { idx: number } = getContext('pageIdx');
     pageIdx.idx = 2;
-
 </script>
 
 {#if vocaArr.length === 0}
-<Info user={user} />
-<p>더 이상 외울 단어가 없습니다.</p>
+    <Info {user} />
+    <p>더 이상 외울 단어가 없습니다.</p>
 {:else}
-<QuizModule reviewArr={reviewArr} vocaArr={vocaArr} isLevelTest={isLevelTest}/>
+    <QuizModule {reviewArr} {vocaArr} {isLevelTest} />
 {/if}
 
 <style>

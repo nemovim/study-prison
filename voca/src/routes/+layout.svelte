@@ -1,10 +1,11 @@
 <script lang="ts">
     import { afterNavigate, beforeNavigate } from '$app/navigation';
     import { setContext } from 'svelte';
+    import '$lib/style/main.css';
 
     let { children } = $props();
 
-    let pageIdx = $state<{idx: number}>({idx:1});
+    let pageIdx = $state<{ idx: number }>({ idx: 1 });
     setContext('pageIdx', pageIdx);
 
     let isLoading = $state<boolean>(false);
@@ -22,8 +23,12 @@
     <div>
         <nav>
             <a href="/" class={pageIdx.idx === 1 ? 'chosenPage' : ''}>메인</a>
-            <a href="/quiz" class={pageIdx.idx === 2 ? 'chosenPage' : ''}>외우기</a>
-            <a href="/add" class={pageIdx.idx === 3 ? 'chosenPage' : ''}>추가하기</a>
+            <a href="/quiz" class={pageIdx.idx === 2 ? 'chosenPage' : ''}
+                >외우기</a
+            >
+            <a href="/add" class={pageIdx.idx === 3 ? 'chosenPage' : ''}
+                >추가하기</a
+            >
         </nav>
 
         {#if isLoading}
@@ -74,7 +79,7 @@
         border-radius: 1rem 1rem 0 0;
         display: inline-block;
         /* border: .3rem black outset; */
-        box-shadow: 0 .5rem 1rem .0rem rgb(200, 200, 200);
+        box-shadow: 0 0.5rem 1rem 0rem rgb(200, 200, 200);
         padding: 1.2rem 2.4rem;
         padding-bottom: 2.2rem;
         font-size: 2rem;
