@@ -46,11 +46,8 @@ export default class QuizMachine {
 
     #makeAnswer(voca: Voca): string[] {
         const splittedExample = voca['example'].split('*');
-        const answerArr = [voca['word'], splittedExample[1], ...voca['acceptedWords']].map(answer => {
-            return answer.toLowerCase()
-        });
+        const answerArr = [voca['word'], splittedExample[1], ...voca['acceptedWords']];
         return Array.from(new Set(answerArr))
-
     }
 
     isCorrectAnswer(answer: string): boolean {
@@ -77,7 +74,7 @@ export default class QuizMachine {
         if (sum === 0) {
             return 0;
         } else {
-            return voca.oxArr[0]/sum*100;
+            return voca.oxArr[0] / sum * 100;
         }
 
     }
@@ -144,7 +141,7 @@ export default class QuizMachine {
         return this.#quizArr[this.idx];
     }
 
-    getNextQuizForLevelTest(lastQuiz: Quiz | undefined, result:boolean): Quiz | null {
+    getNextQuizForLevelTest(lastQuiz: Quiz | undefined, result: boolean): Quiz | null {
         let lastLevel: number;
 
         if (lastQuiz === undefined) {
@@ -165,15 +162,15 @@ export default class QuizMachine {
 
         let nextQuiz: Quiz | null = null;
         if (result) {
-            this.#quizArr.forEach((quiz, idx:number) => {
-                if (quiz.level > lastLevel && quiz.level <= lastLevel+1) {
+            this.#quizArr.forEach((quiz, idx: number) => {
+                if (quiz.level > lastLevel && quiz.level <= lastLevel + 1) {
                     this.idx = idx;
                     nextQuiz = quiz;
                 }
             });
         } else {
-            this.#quizArr.forEach((quiz, idx:number) => {
-                if (quiz.level < lastLevel && quiz.level >= lastLevel-1) {
+            this.#quizArr.forEach((quiz, idx: number) => {
+                if (quiz.level < lastLevel && quiz.level >= lastLevel - 1) {
                     this.idx = idx;
                     nextQuiz = quiz;
                 }

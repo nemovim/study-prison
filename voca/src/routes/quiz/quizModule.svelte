@@ -245,6 +245,11 @@
         }
     }
 
+    #return-btn {
+        text-decoration: none;
+        color: black;
+    }
+
     #pass-btn,
     #next-btn,
     #return-btn,
