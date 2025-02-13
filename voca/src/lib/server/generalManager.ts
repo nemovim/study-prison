@@ -14,6 +14,10 @@ export default class GeneralManager {
         return await Promise.allSettled([UserManager.addNewUserByEmail(email), ReviewManager.addNewReviewByEmail(email)]);
     }
 
+    static async addVocaByWordAndMeaning(word: string, meaning: string, overwrite: boolean=false) {
+        return await VocaManager.addVocaByWordAndMeaning(word, meaning, overwrite);
+    }
+
     static async getLevelTest(user: User): Promise<{ reviewArr: Review[], vocaArr: Voca[] }> {
         const reviewArr = await ReviewManager.getAllReviewsByEmail(user.email);
         const vocaIdArr = reviewArr.map((review) => review.vocaId);
@@ -82,9 +86,9 @@ export default class GeneralManager {
             if (review.reviewCnt === -1) {
                 if (user.level < voca.level) {
                     user.level = this.getUpdatedLevel(user.level, voca.level, user.cnt);
-                }
-                if (user.cnt >= 20) {
-                    voca.level = this.getUpdatedLevel(voca.level, user.level, vocaCnt);
+                    if (user.cnt >= 20) {
+                        voca.level = this.getUpdatedLevel(voca.level, user.level, vocaCnt);
+                    }
                 }
                 voca.oxArr[0] += 1;
                 user.cnt += 1;
@@ -100,9 +104,9 @@ export default class GeneralManager {
             if (review.reviewCnt === -1) {
                 if (user.level > voca.level) {
                     user.level = this.getUpdatedLevel(user.level, voca.level, user.cnt);
-                }
-                if (user.cnt >= 20) {
-                    voca.level = this.getUpdatedLevel(voca.level, user.level, vocaCnt);
+                    if (user.cnt >= 20) {
+                        voca.level = this.getUpdatedLevel(voca.level, user.level, vocaCnt);
+                    }
                 }
                 voca.oxArr[1] += 1;
             } else if (updatedReview.reviewCnt >= 5) {

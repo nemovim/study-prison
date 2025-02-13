@@ -1,4 +1,4 @@
-import VocaManager from '$lib/server/vocaManager';
+import GeneralManager from '$lib/server/generalManager';
 import type { Actions } from './$types';
 
 export async function load({ parent }) {
@@ -12,7 +12,7 @@ export const actions = {
         const meaning: string = String(formData.get('meaning'));
         const overwrite: boolean = !!formData.get('overwrite');
         try {
-            const voca = await VocaManager.addVocaByWordAndMeaning(word, meaning, overwrite);
+            const voca = await GeneralManager.addVocaByWordAndMeaning(word, meaning, overwrite);
             return { success: true, voca: JSON.stringify(voca) };
         } catch (e) {
             if (e instanceof Error) {

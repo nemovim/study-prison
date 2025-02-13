@@ -5,8 +5,10 @@ import * as fs from 'fs';
 import * as path from 'path';
 
 export default class VocaManager {
-    static async addVocaByWordAndMeaning(word: string, meaning: string, overwrite: boolean=false) {
-        const vocaArr: Voca[] = await VocaModel.find({ word, meaning });
+    static async addVocaByWordAndMeaning(_word: string, meaning: string, overwrite: boolean=false) {
+        const word = _word.replaceAll(/ +/g, ' ').replaceAll(/-+/g, '-');
+        const wordReg = new RegExp(`${word}\|${word.replaceAll('-', ' ')}\|${word.replaceAll(' ', '-')}`, 'i');
+        const vocaArr: Voca[] = await VocaModel.find({ word: wordReg, meaning });
         if (vocaArr.length === 0 || overwrite) {
             const [level, example, translation, pronunciation] = await ai.generateExampleAndTranslation(word, meaning);
             if (vocaArr.length === 0) {

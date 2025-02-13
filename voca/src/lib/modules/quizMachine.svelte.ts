@@ -50,9 +50,11 @@ export default class QuizMachine {
         return Array.from(new Set(answerArr))
     }
 
-    isCorrectAnswer(answer: string): boolean {
+    isCorrectAnswer(_answer: string): boolean {
+        const answer = _answer.toLowerCase().replace(/-| /g, '');
+        const parsedAnswerArr = this.#answerArr[this.idx].map(word => word.replace(/-| /g, ''));
         if (this.#vocaArr.length === 0) return false;
-        if (this.#answerArr[this.idx].indexOf(answer) !== -1) {
+        if (parsedAnswerArr.indexOf(answer) !== -1) {
             return true;
         } else {
             return false;
