@@ -55,6 +55,7 @@
             );
             if (temp == null) {
                 quizEnds = true;
+                isWating = false;
                 return;
             } else {
                 quiz = temp;
@@ -205,7 +206,8 @@
 
         :global(span) {
             font-size: 1.5rem;
-            width: 100%;
+            width: max-content;
+            min-width: 100%;
             left: 0;
             text-align: center;
             top: -1.5rem;
