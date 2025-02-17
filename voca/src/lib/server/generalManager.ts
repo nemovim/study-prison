@@ -85,37 +85,40 @@ export default class GeneralManager {
         if (result) {
             if (review.reviewCnt === -1) {
                 if (user.level < voca.level) {
-                    user.level = this.getUpdatedLevel(user.level, voca.level, user.cnt);
                     if (user.cnt >= 20) {
                         voca.level = this.getUpdatedLevel(voca.level, user.level, vocaCnt);
+                        user.level = this.getUpdatedLevel(user.level, voca.level, 100);
+                    } else {
+                        user.level = this.getUpdatedLevel(user.level, voca.level, user.cnt);
                     }
                 }
                 voca.oxArr[0] += 1;
                 user.cnt += 1;
             } else if (updatedReview.reviewCnt >= 5) {
                 if (user.level < voca.level) {
-                    user.level = this.getUpdatedLevel(user.level, voca.level, user.cnt);
+                    user.level = this.getUpdatedLevel(user.level, voca.level, 100);
                 }
                 voca.oxArr[0] += 1;
                 voca.oxArr[1] -= 1;
-                user.cnt += 1;
             }
         } else {
             if (review.reviewCnt === -1) {
                 if (user.level > voca.level) {
-                    user.level = this.getUpdatedLevel(user.level, voca.level, user.cnt);
                     if (user.cnt >= 20) {
                         voca.level = this.getUpdatedLevel(voca.level, user.level, vocaCnt);
+                        user.level = this.getUpdatedLevel(user.level, voca.level, 100);
+                    } else {
+                        user.level = this.getUpdatedLevel(user.level, voca.level, user.cnt);
                     }
                 }
                 voca.oxArr[1] += 1;
+                user.cnt += 1;
             } else if (updatedReview.reviewCnt >= 5) {
                 if (user.level > voca.level) {
-                    user.level = this.getUpdatedLevel(user.level, voca.level, user.cnt);
+                    user.level = this.getUpdatedLevel(user.level, voca.level, 100);
                 }
                 voca.oxArr[0] -= 1;
                 voca.oxArr[1] += 1;
-                user.cnt -= 1;
             }
         }
         // console.log(voca.oxArr);
