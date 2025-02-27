@@ -26,10 +26,17 @@ interface Review {
 
 type ResultMap = Map<string, boolean>;
 
+type UserHistory = {
+        level: number,
+        cnt: number,
+        date: Date
+}
+
 interface User {
     email: string,
     level: number,
     cnt: number,
+    historyArr: UserHistory[] 
 }
 
 // export type {

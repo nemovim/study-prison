@@ -1,5 +1,3 @@
-import review from '$lib/models/review';
-import user from '$lib/models/user';
 import ReviewManager from './reviewManager';
 import UserManager from './userManager';
 import VocaManager from './vocaManager';
@@ -7,14 +5,36 @@ import VocaManager from './vocaManager';
 export default class GeneralManager {
 
     static async getUserByEmail(email: string) {
-        return await UserManager.getUserByEmail(email);
+        const user = await UserManager.getUserByEmail(email);
+        if (user !== null) {
+            await this.updateUserHistoryByUser(user);
+        }
+        return user;
+    }
+
+    static async updateUserHistoryByUser(user: User) {
+        if (user.historyArr.length === 0) {
+            user.historyArr = [{
+                level: user.level,
+                cnt: user.cnt,
+                date: new Date()
+            }];
+            await UserManager.updateUser(user);
+        } else {
+            if (new Date(user.historyArr[user.historyArr.length - 1].date).getTime() + 1000 * 60 * 60 * 6 < new Date().getTime()) {
+                await UserManager.updateUserHistory(user);
+            } else {
+                return false;
+            }
+        }
+        return true;
     }
 
     static async addNewUserByEmail(email: string) {
         return await Promise.allSettled([UserManager.addNewUserByEmail(email), ReviewManager.addNewReviewByEmail(email)]);
     }
 
-    static async addVocaByWordAndMeaning(word: string, meaning: string, overwrite: boolean=false) {
+    static async addVocaByWordAndMeaning(word: string, meaning: string, overwrite: boolean = false) {
         return await VocaManager.addVocaByWordAndMeaning(word, meaning, overwrite);
     }
 

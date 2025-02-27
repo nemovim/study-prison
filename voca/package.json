@@ -15,6 +15,7 @@
 		"@sveltejs/adapter-vercel": "^5.6.1",
 		"@sveltejs/kit": "^2.17.1",
 		"@sveltejs/vite-plugin-svelte": "^4.0.0",
+		"@types/diff": "^7.0.1",
 		"sass": "^1.83.4",
 		"svelte": "^5.0.0",
 		"svelte-check": "^4.0.0",
@@ -23,6 +24,7 @@
 	},
 	"dependencies": {
 		"@auth/sveltekit": "^1.7.4",
+		"diff": "^7.0.0",
 		"mongoose": "^8.9.5",
 		"openai": "^4.78.1"
 	}

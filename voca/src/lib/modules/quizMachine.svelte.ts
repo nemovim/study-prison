@@ -1,4 +1,5 @@
 import { shuffleArr, reviewDeltaNameMap } from '$lib/utils/utils';
+import { diffChars } from 'diff';
 
 export default class QuizMachine {
     #vocaArr: Voca[] = [];
@@ -50,14 +51,24 @@ export default class QuizMachine {
         return Array.from(new Set(answerArr))
     }
 
-    isCorrectAnswer(_answer: string): boolean {
+    isCorrectAnswer(_answer: string): { result: boolean, diff: number } {
         const answer = _answer.toLowerCase().replace(/-| /g, '');
         const parsedAnswerArr = this.#answerArr[this.idx].map(word => word.toLocaleLowerCase().replace(/-| /g, ''));
-        if (this.#vocaArr.length === 0) return false;
+        if (this.#vocaArr.length === 0) return { result: false, diff: -1 };
         if (parsedAnswerArr.indexOf(answer) !== -1) {
-            return true;
+            return { result: true, diff: 0 };
         } else {
-            return false;
+            const wrongDiffObjArr = parsedAnswerArr.map(word => diffChars(word, answer).filter(diffObj => !(!diffObj.added && !diffObj.removed)));
+            
+            const wrongCnt = Math.min(...wrongDiffObjArr.map(diffObjArr => diffObjArr.reduce((prev, diffObj, idx) => {
+                if (idx !== 0 && !diffObjArr[idx-1].added && diffObjArr[idx-1].removed) {
+                    if (diffObj.added && !diffObj.removed && (diffObj.count || 0) >= (diffObjArr[idx-1].count || 0)) {
+                        return prev + (diffObj.count || 0) - (diffObjArr[idx-1].count || 0);
+                    }
+                }
+                return prev+(diffObj.count||0)
+            }, 0)));
+            return { result: false, diff: wrongCnt };
         }
     }
 

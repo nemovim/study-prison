@@ -17,4 +17,14 @@ export default class UserManager {
     static async updateUser(user: User) {
         return await UserModel.updateOne({ email: user.email }, user);
     }
+
+    static async updateUserHistory(user: User) {
+        return await UserModel.updateOne({ email: user.email }, {
+            $push: { historyArr: {
+                level: user.level,
+                cnt: user.cnt,
+                date: new Date(),
+            }}
+        });
+    }
 }

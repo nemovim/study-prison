@@ -10,6 +10,7 @@
 
     let quiz = $state<Quiz>();
     let isCorrectAnswer = $state<boolean>(true);
+    let wrongCnt = $state<number>(-1);
     let userAnswer = $state<string>('');
     let lastAnswer = $state<string>('');
     let answerArr = $state<string[]>();
@@ -36,6 +37,10 @@
 
     async function showAnswer() {
         isWating = true;
+        if (userAnswer !== '' && !confirm('정말로 답을 보시겠습니까?')) {
+            isWating = false;
+            return true;
+        }
         isSolving = false;
         isCorrectAnswer = false;
         userAnswer = '';
@@ -75,7 +80,10 @@
 
     async function checkAnswer() {
         isWating = true;
-        if ((isCorrectAnswer = quizMachine.isCorrectAnswer(userAnswer))) {
+        const answerCheckResult = quizMachine.isCorrectAnswer(userAnswer);
+        isCorrectAnswer = answerCheckResult['result'];
+        wrongCnt = answerCheckResult['diff'];
+        if (isCorrectAnswer) {
             isSolving = false;
             if (!isLevelTest) {
                 quizEnds = quizMachine.quizEnds();
@@ -101,6 +109,7 @@
         nextQuiz();
         window.onkeydown = async (e) => {
             if (e.key == 'Enter') {
+                e.preventDefault();
                 if (!isWating) {
                     if (isSolving) {
                         await checkAnswer();
@@ -150,9 +159,20 @@
                 <input type="text" bind:value={userAnswer} autofocus />
             </div>
             {#if !isCorrectAnswer}
-                <p><span style:color="red">{lastAnswer}</span> 오답입니다.</p>
+                <div style:display="flex">
+                    {#if wrongCnt > 0 && wrongCnt <= 2}
+                        <p style:color="red">{lastAnswer}</p>
+                        <p id="wrong-cnt-p">{wrongCnt}문자 차이!</p>
+                    {:else}
+                        <p style:color="red">{lastAnswer}</p>
+                        <p id="wrong-p">틀렸습니다.</p>
+                    {/if}
+                </div>
             {/if}
-            <button onclick={showAnswer} id="pass-btn">정답 보기</button>
+            <div id="btn-div">
+                <button onclick={showAnswer} id="pass-btn">패스</button>
+                <button onclick={checkAnswer} id="answer-btn">확인</button>
+            </div>
         {:else if !isSolving}
             <p>
                 정답: <span
@@ -215,6 +235,26 @@
         }
     }
 
+    :global(#wrong-p) {
+        // display: block;
+        // position: relative;
+        font-size: 2rem;
+        margin-left: 1rem;
+        // left: 0;
+        color: red;
+        font-weight: bold;
+    }
+
+    :global(#wrong-cnt-p) {
+        // display: block;
+        // position: relative;
+        font-size: 2rem;
+        margin-left: 1rem;
+        // left: 0;
+        color: limegreen;
+        font-weight: bold;
+    }
+
     #answer-div {
         display: flex;
         align-items: center;
@@ -252,7 +292,17 @@
         color: black;
     }
 
+    #pass-btn {
+        margin-right: 1rem;
+        background-color: rgb(255, 220, 220) !important;
+    }
+
+    #answer-btn {
+        background-color: rgb(220, 255, 220) !important;
+    }
+
     #pass-btn,
+    #answer-btn,
     #next-btn,
     #return-btn,
     #loading-btn {
