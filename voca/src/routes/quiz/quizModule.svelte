@@ -102,15 +102,17 @@
         window.location.href = '/';
     }
 
-    onMount(() => {
-        console.log(reviewArr);
-        console.log(vocaArr);
-        quizMachine.init(reviewArr, vocaArr);
-        nextQuiz();
-        window.onkeydown = async (e) => {
-            if (e.key == 'Enter') {
-                e.preventDefault();
-                if (!isWating) {
+    async function enterKey(e: KeyboardEvent) {
+        if (e.key == 'Enter') {
+            e.preventDefault();
+            if (!isWating) {
+                if (e.ctrlKey) {
+                    if (isSolving) {
+                        await showAnswer();
+                    } else if (quizEnds) {
+                        returnToMain();
+                    }
+                } else {
                     if (isSolving) {
                         await checkAnswer();
                     } else if (!quizEnds) {
@@ -118,9 +120,18 @@
                     }
                 }
             }
-        };
+        }
+    }
+
+    onMount(() => {
+        console.log(reviewArr);
+        console.log(vocaArr);
+        quizMachine.init(reviewArr, vocaArr);
+        nextQuiz();
     });
 </script>
+
+<svelte:window on:keydown={enterKey} />
 
 {#if quiz !== undefined}
     <div id="quiz-info-div">

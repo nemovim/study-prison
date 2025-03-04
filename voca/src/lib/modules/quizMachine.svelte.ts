@@ -58,14 +58,16 @@ export default class QuizMachine {
         if (parsedAnswerArr.indexOf(answer) !== -1) {
             return { result: true, diff: 0 };
         } else {
-            const wrongDiffObjArr = parsedAnswerArr.map(word => diffChars(word, answer).filter(diffObj => !(!diffObj.added && !diffObj.removed)));
+            const wrongDiffObjArr = parsedAnswerArr.map(word => diffChars(word, answer));
             
             const wrongCnt = Math.min(...wrongDiffObjArr.map(diffObjArr => diffObjArr.reduce((prev, diffObj, idx) => {
+                console.log(diffObj)
                 if (idx !== 0 && !diffObjArr[idx-1].added && diffObjArr[idx-1].removed) {
                     if (diffObj.added && !diffObj.removed && (diffObj.count || 0) >= (diffObjArr[idx-1].count || 0)) {
                         return prev + (diffObj.count || 0) - (diffObjArr[idx-1].count || 0);
                     }
                 }
+                if (!diffObj.added && !diffObj.removed) return prev;
                 return prev+(diffObj.count||0)
             }, 0)));
             return { result: false, diff: wrongCnt };
