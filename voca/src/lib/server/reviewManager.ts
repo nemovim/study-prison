@@ -15,7 +15,6 @@ export default class ReviewManager {
         } else {
             return data.reviewArr;
         }
-
     }
 
     static createReviewByVocaId(vocaId: string) {

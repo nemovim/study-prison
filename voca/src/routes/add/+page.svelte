@@ -12,7 +12,7 @@
     pageIdx.idx = 3;
 </script>
 
-<Info {user} />
+<Info {user} page={'add'}/>
 
 <article>
     <div>
@@ -100,7 +100,6 @@
     }
 
     input {
-        font-family: SunBatang-Light;
         border: none;
         background-color: rgb(245, 245, 245);
         font-size: 2.5rem;
@@ -118,7 +117,6 @@
         font-weight: bold;
         padding: 0.8rem 2rem;
         border: none;
-        font-family: SunBatang-Light;
         /* background-color: rgb(255, 240, 240); */
         background-color: rgb(255, 255, 200);
         box-shadow: 0 0.5rem 0.5rem rgb(220, 220, 220);

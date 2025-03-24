@@ -35,12 +35,12 @@ class AI {
         const response = JSON.parse(completion.choices[0].message.content||'{}');
         const level = Number(response['level']);
         if (Object.keys(response).length === 0) {
-            throw new Error('The word and meaning are not matched or wrong.');
+            throw new Error('단어와 뜻이 일치하지 않거나 잘못된 단어입니다.');
         } else {
             if (!response['example'].includes('*') || !response['translation'].includes('*')) {
-                throw new Error('The AI generated wrong example, please do it again!');
+                throw new Error('AI가 잘못된 결과를 생성했습니다. 다시 시도해 주세요.');
             } else if (level < 1 || level > 10) {
-                throw new Error('The AI generated wrong level, please do it again!');
+                throw new Error('AI가 잘못된 결과를 생성했습니다. 다시 시도해 주세요.');
             } else {
                 return [level, response['example'], response['translation'], response['pronunciation']];
             }

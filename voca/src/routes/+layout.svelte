@@ -1,7 +1,7 @@
 <script lang="ts">
     import { afterNavigate, beforeNavigate } from '$app/navigation';
     import { setContext } from 'svelte';
-    import '$lib/style/main.css';
+    import '$lib/style/main.css'
 
     let { children } = $props();
 

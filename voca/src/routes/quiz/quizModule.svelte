@@ -131,7 +131,7 @@
     });
 </script>
 
-<svelte:window on:keydown={enterKey} />
+<svelte:window onkeydown={enterKey} />
 
 {#if quiz !== undefined}
     <div id="quiz-info-div">
@@ -201,9 +201,7 @@
                 {#if !quizEnds}
                     <button onclick={nextQuiz} id="next-btn">다음</button>
                 {:else}
-                    <a data-sveltekit-reload href="/" id="return-btn"
-                        >돌아가기</a
-                    >
+                    <a data-sveltekit-reload href="/" id="return-btn">돌아가기</a>
                     <!-- <button id="return-btn" onclick={returnToMain}
                         >돌아가기</button
                     > -->
@@ -284,7 +282,6 @@
         }
 
         input {
-            font-family: SunBatang-Light;
             border: none;
             background-color: rgb(245, 245, 245);
             font-size: 2.5rem;
@@ -321,7 +318,6 @@
         font-weight: bold;
         padding: 0.4rem 1.6rem;
         border: none;
-        font-family: SunBatang-Light;
         /* background-color: rgb(255, 240, 240); */
         background-color: rgb(255, 255, 200);
         box-shadow: 0 0.3rem 0.5rem rgb(220, 220, 220);
@@ -340,7 +336,6 @@
         font-weight: bold;
         padding: 0.4rem 1.6rem;
         border: none;
-        font-family: SunBatang-Light;
         /* background-color: rgb(255, 240, 240); */
         background-color: rgb(235, 235, 255);
         box-shadow: 0 0.3rem 0.5rem rgb(220, 220, 220);

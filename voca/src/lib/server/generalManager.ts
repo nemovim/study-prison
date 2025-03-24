@@ -63,15 +63,15 @@ export default class GeneralManager {
         return await ReviewManager.getAllReviewsByEmail(email);
     }
 
-    static async getReviewArrByUser(user: User, cnt: number = 1): Promise<Review[]> {
+    static async getReviewArrByUser(user: User, cnt: number = 20, newCnt: number = 10): Promise<Review[]> {
         const reviewArr = await ReviewManager.getAllReviewsByEmail(user.email);
         const nowReviewArr = reviewArr.filter(review => (new Date(review.reviewDate)) <= new Date());
 
         if (nowReviewArr.length >= cnt) {
-            return nowReviewArr;
+            return nowReviewArr.slice(0, cnt);
         } else {
             const vocaIdArr = reviewArr.map((review) => review.vocaId);
-            const newVocaArr = await VocaManager.getNewRandomVocaByLevel(user.level, cnt - nowReviewArr.length, vocaIdArr);
+            const newVocaArr = await VocaManager.getNewRandomVocaByLevel(user.level, Math.min(cnt - nowReviewArr.length, newCnt), vocaIdArr);
             const newReviewArr = newVocaArr.map(voca => {
                 return ReviewManager.createReviewByVocaId(voca._id)
             });
@@ -114,7 +114,7 @@ export default class GeneralManager {
                 }
                 voca.oxArr[0] += 1;
                 user.cnt += 1;
-            } else if (updatedReview.reviewCnt >= 5) {
+            } else if (updatedReview.reviewCnt == 5) {
                 if (user.level < voca.level) {
                     user.level = this.getUpdatedLevel(user.level, voca.level, 100);
                 }
@@ -133,7 +133,7 @@ export default class GeneralManager {
                 }
                 voca.oxArr[1] += 1;
                 user.cnt += 1;
-            } else if (updatedReview.reviewCnt >= 5) {
+            } else if (review.reviewCnt >= 5) {
                 if (user.level > voca.level) {
                     user.level = this.getUpdatedLevel(user.level, voca.level, 100);
                 }

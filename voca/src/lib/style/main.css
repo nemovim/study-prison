@@ -1,13 +1,13 @@
 @font-face {
-    font-family: 'SunBatang-Light';
-    src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_eight@1.0/SunBatang-Light.woff') format('woff');
-    font-weight: normal;
-    font-style: normal;
+    font-family: 'MaruBuri';
+    /* src: url('/MaruBuri-Regular.otf') format('opentype'); */
+    src: url(https://hangeul.pstatic.net/hangeul_static/webfont/MaruBuri/MaruBuri-Regular.eot);
+    src: url(https://hangeul.pstatic.net/hangeul_static/webfont/MaruBuri/MaruBuri-Regular.eot?#iefix) format("embedded-opentype"), url(https://hangeul.pstatic.net/hangeul_static/webfont/MaruBuri/MaruBuri-Regular.woff2) format("woff2"), url(https://hangeul.pstatic.net/hangeul_static/webfont/MaruBuri/MaruBuri-Regular.woff) format("woff"), url(https://hangeul.pstatic.net/hangeul_static/webfont/MaruBuri/MaruBuri-Regular.ttf) format("truetype");
 }
 
 html {
     font-size: 10px;
-    font-family: SunBatang-Light;
+    font-family: MaruBuri;
     background-color: rgb(245, 245, 245);
 }
 
@@ -47,6 +47,10 @@ html {
     padding-bottom: 0.6rem;
     border-bottom: 0.1rem solid red;
     font-size: 3rem;
+}
+
+input, button {
+    font-family: MaruBuri;
 }
 
 button:hover {

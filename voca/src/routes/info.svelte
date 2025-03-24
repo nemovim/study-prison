@@ -1,5 +1,7 @@
 <script lang="ts">
-    const { user } = $props();
+    const { user, page } = $props();
+
+    const version = '1.0.1';
 
     function parse_time() {
         const y = new Date().getFullYear();
@@ -10,8 +12,13 @@
 </script>
 
 <div id="info-div">
+    {#if page === 'main'}
     <p>{user.email}</p>
+    {:else if page === 'add'}
+    <p>v. {version}</p>
+    {/if}
     <p>{parse_time()}</p>
+
 </div>
 
 <style>

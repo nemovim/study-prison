@@ -11,7 +11,7 @@ export async function load({ locals, parent }) {
             isLevelTest: true,
         };
     } else {
-        const reviewArr = await GeneralManager.getReviewArrByUser(locals.user, 20);
+        const reviewArr = await GeneralManager.getReviewArrByUser(locals.user, 15);
         const vocaArr = await GeneralManager.getVocaArrByReviewArr(reviewArr);
         return {
             reviewArr: JSON.stringify(reviewArr),

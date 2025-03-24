@@ -5,7 +5,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 
 export default class VocaManager {
-    static async addVocaByWordAndMeaning(_word: string, meaning: string, overwrite: boolean=false) {
+    static async addVocaByWordAndMeaning(_word: string, meaning: string, overwrite: boolean = false) {
         const word = _word.replaceAll(/ +/g, ' ').replaceAll(/-+/g, '-');
         const wordReg = new RegExp(`${word}\|${word.replaceAll('-', ' ')}\|${word.replaceAll(' ', '-')}`, 'i');
         const vocaArr: Voca[] = await VocaModel.find({ word: wordReg, meaning });
@@ -22,7 +22,7 @@ export default class VocaManager {
                 return voca;
             }
         } else {
-            throw new Error('This word-meaning pair is already added in the vocabulary!');
+            throw new Error('이미 존재하는 단어-뜻 조합입니다.');
         }
     }
 
@@ -46,19 +46,25 @@ export default class VocaManager {
         return (await VocaModel.find({ word, meaning }))[0];
     }
 
-    static async getVocaByVocaId(vocaId: string): Promise<Voca|null> {
-        return await VocaModel.findOne({ _id: vocaId});
+    static async getVocaByVocaId(vocaId: string): Promise<Voca | null> {
+        return await VocaModel.findOne({ _id: vocaId });
     }
 
     static async updateVoca(voca: Voca) {
-        return await VocaModel.updateOne({_id: voca._id }, voca);
+        return await VocaModel.updateOne({ _id: voca._id }, voca);
     }
 
     static async getNewRandomVocaByLevel(level: number, cnt: number = 1, vocaIdArr: string[] = []): Promise<Voca[]> {
-        const vocaArr: Voca[] = await VocaModel.aggregate().match({
+        let vocaArr: Voca[] = await VocaModel.aggregate().match({
             $and: [{ level: { $lte: level + 1.5 } }, { level: { $gte: level - 1 } }], '_id': { $not: { $in: vocaIdArr } }
         }).sample(cnt);
         // const vocaArr: Voca[] = await VocaModel.aggregate().match({'level': {'$and': [{'$gt': level}, {'$lt': level}]}}).sample(cnt);
+        if (vocaArr.length === 0) {
+            vocaArr = await VocaModel.aggregate().match({
+                $and: [{ level: { $lte: level + 2.5 } }, { level: { $gte: level - 2 } }], '_id': { $not: { $in: vocaIdArr } }
+            }).sample(cnt);
+        }
+
         return vocaArr;
     }
 
