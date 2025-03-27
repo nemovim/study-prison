@@ -1,13 +1,13 @@
 @font-face {
-    font-family: 'MaruBuri';
-    /* src: url('/MaruBuri-Regular.otf') format('opentype'); */
-    src: url(https://hangeul.pstatic.net/hangeul_static/webfont/MaruBuri/MaruBuri-Regular.eot);
-    src: url(https://hangeul.pstatic.net/hangeul_static/webfont/MaruBuri/MaruBuri-Regular.eot?#iefix) format("embedded-opentype"), url(https://hangeul.pstatic.net/hangeul_static/webfont/MaruBuri/MaruBuri-Regular.woff2) format("woff2"), url(https://hangeul.pstatic.net/hangeul_static/webfont/MaruBuri/MaruBuri-Regular.woff) format("woff"), url(https://hangeul.pstatic.net/hangeul_static/webfont/MaruBuri/MaruBuri-Regular.ttf) format("truetype");
+    font-family: 'NanumBarunpen';
+    src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_two@1.0/NanumBarunpen.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
 }
 
 html {
     font-size: 10px;
-    font-family: MaruBuri;
+    font-family: 'NanumBarunpen';
     background-color: rgb(245, 245, 245);
 }
 
@@ -50,7 +50,7 @@ html {
 }
 
 input, button {
-    font-family: MaruBuri;
+    font-family: 'NanumBarunpen';
 }
 
 button:hover {

@@ -1,7 +1,7 @@
 <script lang="ts">
     const { user, page } = $props();
 
-    const version = '1.0.1';
+    const version = '1.0.2';
 
     function parse_time() {
         const y = new Date().getFullYear();
