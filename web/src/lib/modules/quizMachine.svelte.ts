@@ -1,0 +1,197 @@
+import { shuffleArr, reviewDeltaNameMap } from '$lib/utils/utils';
+import { diffChars } from 'diff';
+
+export default class QuizMachine {
+    #vocaArr: Voca[] = [];
+    #reviewMap: Map<string, Review> = new Map();
+    #answerArr: string[][] = [];
+    #wrongVocaArr: Voca[] = [];
+    #quizArr: Quiz[] = [];
+    idx = $state<number>(-1);
+
+    constructor() {
+    }
+
+    init(reviewArr: Review[], vocaArr: Voca[]) {
+        this.#vocaArr = vocaArr;
+        reviewArr.forEach((review) => {
+            this.#reviewMap.set(review.vocaId, review)
+        })
+        this.shuffleVocaArr();
+    }
+
+    #setQuizAndAnswer() {
+        this.#quizArr = [];
+        this.#answerArr = [];
+        this.#vocaArr.forEach(voca => {
+            this.#quizArr.push(this.#makeQuiz(voca));
+            this.#answerArr.push(this.#makeAnswer(voca));
+        });
+    }
+
+    #makeQuiz(voca: Voca): Quiz {
+        let splittedExample = voca['example'].split('*');
+        splittedExample[1] = '______';
+        const parsed_example = splittedExample.join('');
+
+        const parsed_translation = voca['translation'].replaceAll('*', '\"');
+
+        return {
+            example: parsed_example,
+            translation: parsed_translation,
+            level: voca['level'],
+            pronunciation: voca['pronunciation'],
+            meaning: voca['meaning'],
+        };
+    }
+
+    #makeAnswer(voca: Voca): string[] {
+        const splittedExample = voca['example'].split('*');
+        const answerArr = [voca['word'], splittedExample[1], ...voca['acceptedWords']];
+        return Array.from(new Set(answerArr))
+    }
+
+    isCorrectAnswer(_answer: string): { result: boolean, diff: number } {
+        const answer = _answer.toLowerCase().replace(/-| /g, '');
+        const parsedAnswerArr = this.#answerArr[this.idx].map(word => word.toLocaleLowerCase().replace(/-| /g, ''));
+        if (this.#vocaArr.length === 0) return { result: false, diff: -1 };
+        if (parsedAnswerArr.indexOf(answer) !== -1) {
+            return { result: true, diff: 0 };
+        } else {
+            const wrongDiffObjArr = parsedAnswerArr.map(word => diffChars(word, answer));
+            
+            const wrongCnt = Math.min(...wrongDiffObjArr.map(diffObjArr => diffObjArr.reduce((prev, diffObj, idx) => {
+                console.log(diffObj)
+                if (idx !== 0 && !diffObjArr[idx-1].added && diffObjArr[idx-1].removed) {
+                    if (diffObj.added && !diffObj.removed && (diffObj.count || 0) >= (diffObjArr[idx-1].count || 0)) {
+                        return prev + (diffObj.count || 0) - (diffObjArr[idx-1].count || 0);
+                    }
+                }
+                if (!diffObj.added && !diffObj.removed) return prev;
+                return prev+(diffObj.count||0)
+            }, 0)));
+            return { result: false, diff: wrongCnt };
+        }
+    }
+
+    getReview(): Review {
+        return this.#reviewMap.get(this.#vocaArr[this.idx]._id) as Review;
+    }
+
+    getReviewDateName(): string {
+        const review = this.getReview();
+        return reviewDeltaNameMap.get(review.reviewCnt) as string;
+    }
+
+    getOXRate(): number {
+        const voca = this.#vocaArr[this.idx];
+        const sum = voca.oxArr[0] + voca.oxArr[1];
+        if (sum === 0) {
+            return 0;
+        } else {
+            return voca.oxArr[0] / sum * 100;
+        }
+
+    }
+
+    getAnswerArr(): string[] {
+        return this.#answerArr[this.idx];
+    }
+
+    getQuizArr() {
+        return this.#quizArr;
+    }
+
+    quizEnds(): boolean {
+        if (this.idx + 1 >= this.#quizArr.length && this.#wrongVocaArr.length === 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    async guessCorrectAnswer() {
+        // Fetch the post request
+        const result = await fetch('/api/review', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                review: this.getReview(),
+                result: true,
+            })
+        })
+        this.#reviewMap.set(this.#vocaArr[this.idx]._id, await result.json());
+    }
+
+    async guessWrongAnswer() {
+        this.#wrongVocaArr.push(this.#vocaArr[this.idx]);
+        const result = await fetch('/api/review', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                review: this.getReview(),
+                result: false,
+            })
+        });
+        this.#reviewMap.set(this.#vocaArr[this.idx]._id, await result.json());
+    }
+
+    shuffleVocaArr() {
+        shuffleArr(this.#vocaArr);
+        this.#setQuizAndAnswer();
+    }
+
+    getNextQuiz(): Quiz {
+        this.idx += 1;
+        if (this.idx >= this.#quizArr.length) {
+            this.#vocaArr = this.#wrongVocaArr;
+            this.#wrongVocaArr = [];
+            this.shuffleVocaArr();
+            this.idx = 0;
+        }
+        return this.#quizArr[this.idx];
+    }
+
+    getNextQuizForLevelTest(lastQuiz: Quiz | undefined, result: boolean): Quiz | null {
+        let lastLevel: number;
+
+        if (lastQuiz === undefined) {
+            lastLevel = this.#vocaArr.reduce((prev, voca) => {
+                if (voca.level < prev) {
+                    return voca.level;
+                } else {
+                    return prev;
+                }
+            }, 10);
+            result = true;
+        } else {
+            lastLevel = lastQuiz.level;
+            this.#quizArr.splice(this.idx, 1);
+            this.#answerArr.splice(this.idx, 1);
+            this.#vocaArr.splice(this.idx, 1);
+        }
+
+        let nextQuiz: Quiz | null = null;
+        if (result) {
+            this.#quizArr.forEach((quiz, idx: number) => {
+                if (quiz.level > lastLevel && quiz.level <= lastLevel + 1) {
+                    this.idx = idx;
+                    nextQuiz = quiz;
+                }
+            });
+        } else {
+            this.#quizArr.forEach((quiz, idx: number) => {
+                if (quiz.level < lastLevel && quiz.level >= lastLevel - 1) {
+                    this.idx = idx;
+                    nextQuiz = quiz;
+                }
+            });
+        }
+
+        return nextQuiz;
+    }
+}

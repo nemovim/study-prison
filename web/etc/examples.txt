@@ -1,0 +1,85 @@
+{ "word": "walk", "meaning": "걷다", "level": 1, "pronunciation": "워크", "example": "She likes to *walk* in the park every morning.", "translation": "그녀는 매일 아침 공원에서 *걷는* 것을 좋아합니다." }
+{ "word": "run", "meaning": "뛰다", "level": 1, "pronunciation": "런", "example": "He can *run* faster than anyone else on the team.", "translation": "그는 팀에서 누구보다 빨리 *뛸* 수 있습니다." }
+{ "word": "jump", "meaning": "점프하다", "level": 1, "pronunciation": "점프", "example": "The cat likes to *jump* over the fence.", "translation": "고양이는 울타리 위로 *점프하는* 것을 좋아합니다." }
+{ "word": "play", "meaning": "놀다", "level": 1, "pronunciation": "플레이", "example": "The children *play* in the playground.", "translation": "아이들은 놀이터에서 *놀아요*." }
+{ "word": "read", "meaning": "읽다", "level": 1, "pronunciation": "리드", "example": "She loves to *read* mystery novels.", "translation": "그녀는 미스터리 소설 *읽는* 것을 좋아합니다." }
+{ "word": "write", "meaning": "쓰다", "level": 1, "pronunciation": "라이트", "example": "Please *write* your name on the form.", "translation": "양식에 이름을 *써* 주세요." }
+{ "word": "sing", "meaning": "노래하다", "level": 1, "pronunciation": "싱", "example": "He likes to *sing* in the choir.", "translation": "그는 합창단에서 *노래하는* 것을 좋아합니다." }
+{ "word": "dance", "meaning": "춤추다", "level": 1, "pronunciation": "댄스", "example": "They *dance* to the music.", "translation": "그들은 음악에 맞춰 *춤춥니다*." }
+{ "word": "swim", "meaning": "수영하다", "level": 1, "pronunciation": "스윔", "example": "She *swims* in the ocean during summer.", "translation": "그녀는 여름에 바다에서 *수영합니다*." }
+{ "word": "talk", "meaning": "말하다", "level": 1, "pronunciation": "토크", "example": "We need to *talk* about this issue.", "translation": "우리는 이 문제에 대해 *말해야* 합니다." }
+{ "word": "listen", "meaning": "듣다", "level": 1, "pronunciation": "리슨", "example": "Please *listen* to the music carefully.", "translation": "음악을 *들어* 주세요." }
+{ "word": "watch", "meaning": "보다", "level": 1, "pronunciation": "와치", "example": "I like to *watch* movies on weekends.", "translation": "나는 주말에 영화를 *보는* 것을 좋아합니다." }
+{ "word": "eat", "meaning": "먹다", "level": 1, "pronunciation": "이트", "example": "We *eat* dinner together every evening.", "translation": "우리는 매일 저녁 함께 저녁을 *먹습니다*." }
+{ "word": "drink", "meaning": "마시다", "level": 1, "pronunciation": "드링크", "example": "It's important to *drink* enough water.", "translation": "충분한 물을 *마시는* 것이 중요합니다." }
+{ "word": "sleep", "meaning": "자다", "level": 1, "pronunciation": "슬립", "example": "He tries to *sleep* eight hours a night.", "translation": "그는 밤에 8시간을 *자려고* 노력합니다." }
+{ "word": "draw", "meaning": "그리다", "level": 2, "pronunciation": "드로", "example": "She likes to *draw* pictures of animals.", "translation": "그녀는 동물 그림을 *그리는* 것을 좋아합니다." }
+{ "word": "build", "meaning": "짓다", "level": 2, "pronunciation": "빌드", "example": "They want to *build* a new house next year.", "translation": "그들은 내년에 새 집을 *짓고* 싶어합니다." }
+{ "word": "solve", "meaning": "해결하다", "level": 2, "pronunciation": "솔브", "example": "Can you *solve* this math problem?", "translation": "이 수학 문제를 *해결할* 수 있니?" }
+{ "word": "help", "meaning": "돕다", "level": 1, "pronunciation": "헬프", "example": "She offered to *help* me with the project.", "translation": "그녀는 프로젝트를 *도와주겠다고* 나섰습니다." }
+{ "word": "make", "meaning": "만들다", "level": 1, "pronunciation": "메이크", "example": "He likes to *make* cakes on weekends.", "translation": "그는 주말에 케이크를 *만드는* 것을 좋아합니다." }
+{ "word": "use", "meaning": "사용하다", "level": 2, "pronunciation": "유즈", "example": "You can *use* my pen if you need it.", "translation": "필요하면 내 펜을 *사용하세요*." }
+{ "word": "find", "meaning": "찾다", "level": 2, "pronunciation": "파인드", "example": "I need to *find* my keys before leaving.", "translation": "떠나기 전에 열쇠를 *찾아야* 합니다." }
+{ "word": "share", "meaning": "공유하다", "level": 2, "pronunciation": "셰어", "example": "The siblings *share* a room in their house.", "translation": "형제자매는 집에서 방을 *공유합니다*." }
+{ "word": "visit", "meaning": "방문하다", "level": 2, "pronunciation": "비짓", "example": "They plan to *visit* the museum this weekend.", "translation": "그들은 이번 주말에 박물관을 *방문할* 계획입니다." }
+{ "word": "laugh", "meaning": "웃다", "level": 1, "pronunciation": "래프", "example": "His jokes always make me *laugh*.", "translation": "그의 농담은 항상 나를 *웃게* 만듭니다." }
+{ "word": "clean", "meaning": "청소하다", "level": 2, "pronunciation": "클린", "example": "She likes to *clean* the house every Friday.", "translation": "그녀는 매주 금요일마다 집을 *청소하는* 것을 좋아합니다." }
+{ "word": "learn", "meaning": "배우다", "level": 2, "pronunciation": "런", "example": "We *learn* something new every day.", "translation": "우리는 매일 새로운 것을 *배웁니다*." }
+{ "word": "teach", "meaning": "가르치다", "level": 3, "pronunciation": "티치", "example": "He *teaches* math at the high school.", "translation": "그는 고등학교에서 수학을 *가르칩니다*." }
+{ "word": "stop", "meaning": "멈추다", "level": 1, "pronunciation": "스탑", "example": "The train will *stop* at the next station.", "translation": "기차는 다음 역에서 *멈출* 것입니다." }
+{ "word": "start", "meaning": "시작하다", "level": 1, "pronunciation": "스타트", "example": "They will *start* the project next week.", "translation": "그들은 다음 주에 프로젝트를 *시작할* 것입니다." }
+{ "word": "book", "meaning": "책", "level": 1, "pronunciation": "북", "example": "She borrowed a *book* from the library.", "translation": "그녀는 도서관에서 *책*을 빌렸습니다." }
+{ "word": "school", "meaning": "학교", "level": 1, "pronunciation": "스쿨", "example": "The *school* is closed today.", "translation": "오늘 *학교*는 닫았습니다." }
+{ "word": "teacher", "meaning": "교사", "level": 3, "pronunciation": "티처", "example": "The *teacher* explained the lesson clearly.", "translation": "*선생님*은 수업 내용을 명확하게 설명했습니다." }
+{ "word": "friend", "meaning": "친구", "level": 1, "pronunciation": "프렌드", "example": "She is my best *friend*.", "translation": "그녀는 내 가장 친한 *친구*입니다." }
+{ "word": "pencil", "meaning": "연필", "level": 1, "pronunciation": "펜슬", "example": "Can I borrow your *pencil*?", "translation": "*연필*을 빌릴 수 있을까요?" }
+{ "word": "computer", "meaning": "컴퓨터", "level": 3, "pronunciation": "컴퓨터", "example": "He uses his *computer* for work.", "translation": "그는 일을 위해 *컴퓨터*를 사용합니다." }
+{ "word": "family", "meaning": "가족", "level": 1, "pronunciation": "패밀리", "example": "We are having a *family* dinner tonight.", "translation": "우리는 오늘 밤 *가족* 저녁 식사를 합니다." }
+{ "word": "city", "meaning": "도시", "level": 1, "pronunciation": "시티", "example": "New York is a very big *city*.", "translation": "뉴욕은 아주 큰 *도시*입니다." }
+{ "word": "nature", "meaning": "자연", "level": 3, "pronunciation": "네이처", "example": "She loves spending time in *nature*.", "translation": "그녀는 *자연* 속에서 시간을 보내는 것을 좋아합니다." }
+{ "word": "animal", "meaning": "동물", "level": 1, "pronunciation": "애니멀", "example": "The zoo has many different *animals*.", "translation": "동물원에는 다양한 *동물*들이 있습니다." }
+{ "word": "color", "meaning": "색깔", "level": 1, "pronunciation": "컬러", "example": "Blue is my favorite *color*.", "translation": "파랑은 내가 가장 좋아하는 *색깔*입니다." }
+{ "word": "dream", "meaning": "꿈", "level": 2, "pronunciation": "드림", "example": "She had a strange *dream* last night.", "translation": "그녀는 어젯밤에 이상한 *꿈*을 꾸었습니다." }
+{ "word": "game", "meaning": "게임", "level": 1, "pronunciation": "게임", "example": "They played a fun *game* at the party.", "translation": "그들은 파티에서 재미있는 *게임*을 했습니다." }
+{ "word": "music", "meaning": "음악", "level": 2, "pronunciation": "뮤직", "example": "He listens to *music* while studying.", "translation": "그는 공부하면서 *음악*을 듣습니다." }
+{ "word": "food", "meaning": "음식", "level": 1, "pronunciation": "푸드", "example": "Italian *food* is my favorite.", "translation": "이탈리아 *음식*은 내가 가장 좋아하는 것입니다." }
+{ "word": "holiday", "meaning": "휴일", "level": 2, "pronunciation": "홀리데이", "example": "Christmas is a popular *holiday* around the world.", "translation": "크리스마스는 전 세계적으로 인기 있는 *휴일*입니다." }
+{ "word": "picture", "meaning": "그림", "level": 1, "pronunciation": "픽처", "example": "The child drew a *picture* of a house.", "translation": "아이들은 집의 *그림*을 그렸습니다." }
+{ "word": "story", "meaning": "이야기", "level": 2, "pronunciation": "스토리", "example": "He told a fascinating *story* about his travels.", "translation": "그는 그의 여행에 대한 매혹적인 *이야기*를 들려주었습니다." }
+{ "word": "world", "meaning": "세계", "level": 1, "pronunciation": "월드", "example": "Traveling allows you to see the *world*.", "translation": "여행은 당신이 *세계*를 볼 수 있게 해줍니다." }
+{ "word": "water", "meaning": "물", "level": 1, "pronunciation": "워터", "example": "Drink plenty of *water* to stay hydrated.", "translation": "수분을 유지하려면 충분한 *물*을 마셔야 합니다." }
+{ "word": "happy", "meaning": "행복한", "level": 1, "pronunciation": "해피", "example": "She feels *happy* when she's with her friends.", "translation": "그녀는 친구들과 함께 있을 때 *행복합니다*." }
+{ "word": "strong", "meaning": "강한", "level": 1, "pronunciation": "스트롱", "example": "He is *strong* enough to lift the heavy box.", "translation": "그는 무거운 상자를 들어올릴 만큼 *강합니다*." }
+{ "word": "bright", "meaning": "밝은", "level": 1, "pronunciation": "브라이트", "example": "The sun is very *bright* today.", "translation": "오늘은 태양이 매우 *밝습니다*." }
+{ "word": "clean", "meaning": "깨끗한", "level": 1, "pronunciation": "클린", "example": "The kitchen is *clean* after dinner.", "translation": "주방은 저녁 식사 후 *깨끗합니다*." }
+{ "word": "quick", "meaning": "빠른", "level": 1, "pronunciation": "퀵", "example": "He is *quick* at solving puzzles.", "translation": "그는 퍼즐을 *빠르게* 풉니다." }
+{ "word": "warm", "meaning": "따뜻한", "level": 1, "pronunciation": "웜", "example": "She wore a *warm* coat in the snow.", "translation": "그녀는 눈 속에서 *따뜻한* 코트를 입었습니다." }
+{ "word": "small", "meaning": "작은", "level": 1, "pronunciation": "스몰", "example": "The *small* puppy is very cute.", "translation": "*작은* 강아지는 매우 귀엽습니다." }
+{ "word": "friendly", "meaning": "친절한", "level": 1, "pronunciation": "프렌들리", "example": "The *friendly* neighbors greeted us warmly.", "translation": "*친절한* 이웃들이 우리에게 따뜻하게 인사했습니다." }
+{ "word": "smart", "meaning": "똑똑한", "level": 3, "pronunciation": "스마트", "example": "She is very *smart* and always gets good grades.", "translation": "그녀는 매우 *똑똑해서* 항상 좋은 성적을 받습니다." }
+{ "word": "quiet", "meaning": "조용한", "level": 1, "pronunciation": "콰이엇", "example": "The library is a *quiet* place to study.", "translation": "도서관은 공부하기에 *조용한* 장소입니다." }
+{ "word": "explain", "meaning": "설명하다", "level": 3, "pronunciation": "익스플레인", "example": "Can you *explain* how this machine works?", "translation": "이 기계가 어떻게 작동하는지 *설명해줄* 수 있나요?" }
+{ "word": "curious", "meaning": "호기심 많은", "level": 3, "pronunciation": "큐리어스", "example": "The *curious* cat explored every corner of the house.", "translation": "*호기심 많은* 고양이가 집의 모든 구석을 탐험했습니다." }
+{ "word": "discover", "meaning": "발견하다", "level": 4, "pronunciation": "디스커버", "example": "Scientists hope to *discover* a new way to fight diseases.", "translation": "과학자들은 질병과 싸울 새로운 방법을 *발견하기를* 희망합니다." }
+{ "word": "interpret", "meaning": "해석하다", "level": 4, "pronunciation": "인터프리트", "example": "It's crucial to correctly *interpret* the author's message.", "translation": "작가의 메시지를 정확히 *해석하는* 것이 중요합니다." }
+{ "word": "tool", "meaning": "도구", "level": 2, "pronunciation": "툴", "example": "A wrench is a useful *tool* for fixing things.", "translation": "렌치는 물건을 고치는 데 유용한 *도구*입니다." }
+{ "word": "construct", "meaning": "구성하다", "level": 4, "pronunciation": "컨스트럭트", "example": "She can *construct* a detailed plan from scratch.", "translation": "그녀는 상세한 계획을 처음부터 *구성할* 수 있습니다." }
+{ "word": "evaluate", "meaning": "평가하다", "level": 5, "pronunciation": "이밸류에이트", "example": "The board will *evaluate* the new policy's effectiveness.", "translation": "이사회는 새 정책의 효과를 *평가할* 것입니다." }
+{ "word": "innovate", "meaning": "혁신하다", "level": 6, "pronunciation": "이노베이트", "example": "Companies must *innovate* to stay competitive in the market.", "translation": "기업들은 시장에서 경쟁력을 유지하기 위해 *혁신해야* 합니다." }
+{ "word": "hypothesis", "meaning": "가설", "level": 7, "pronunciation": "하이파써시스", "example": "Her *hypothesis* was that light affects plant growth.", "translation": "그녀의 *가설*은 빛이 식물의 성장에 영향을 미친다는 것이었습니다." }
+{ "word": "diminish", "meaning": "감소하다", "level": 8, "pronunciation": "디미니쉬", "example": "The therapy can *diminish* the symptoms over time.", "translation": "치료법은 시간이 지남에 따라 증상을 *감소시킬* 수 있습니다." }
+{ "word": "sophisticated", "meaning": "정교한", "level": 9, "pronunciation": "서피스티케이티드", "example": "The equipment is *sophisticated* yet user-friendly.", "translation": "그 장비는 *정교하면서도* 사용이 간편합니다." }
+{ "word": "transcendent", "meaning": "초월적인", "level": 10, "pronunciation": "트랜센던트", "example": "Her music was described as having a *transcendent* beauty.", "translation": "그녀의 음악은 *초월적인* 아름다움을 가지고 있다고 묘사되었습니다." }
+{ "word": "analyze", "meaning": "분석하다", "level": 4, "pronunciation": "애널라이즈", "example": "The software can *analyze* large datasets quickly.", "translation": "그 소프트웨어는 대량의 데이터를 빠르게 *분석할* 수 있습니다." }
+{ "word": "integrate", "meaning": "통합하다", "level": 5, "pronunciation": "인티그레이트", "example": "We need to *integrate* all the different components into a single system.", "translation": "우리는 모든 다양한 구성 요소들을 하나의 시스템으로 *통합해야* 합니다." }
+{ "word": "propose", "meaning": "제안하다", "level": 5, "pronunciation": "프로포즈", "example": "She will *propose* a new strategy in the meeting.", "translation": "그녀는 회의에서 새로운 전략을 *제안할* 것입니다." }
+{ "word": "collaborate", "meaning": "협력하다", "level": 6, "pronunciation": "컬래버레이트", "example": "Researchers from different countries frequently *collaborate* on scientific projects.", "translation": "다양한 국가의 연구자들이 과학 프로젝트에서 자주 *협력합니다*." }
+{ "word": "articulate", "meaning": "명확히 표현하다", "level": 6, "pronunciation": "아티큘레이트", "example": "He can *articulate* his ideas clearly and effectively.", "translation": "그는 자신의 아이디어를 명확하고 효과적으로 *표현할* 수 있습니다." }
+{ "word": "synthesize", "meaning": "합성하다", "level": 7, "pronunciation": "신써사이즈", "example": "Chemists can *synthesize* new compounds from existing chemicals.", "translation": "화학자들은 기존 화학물질로부터 새로운 화합물을 *합성할* 수 있습니다." }
+{ "word": "criterion", "meaning": "기준", "level": 7, "pronunciation": "크라이티리언", "example": "Safety is the primary *criterion* for certification.", "translation": "안전은 인증의 주요 *기준*입니다." }
+{ "word": "ambiguous", "meaning": "모호한", "level": 8, "pronunciation": "앰비규어스", "example": "The statement was *ambiguous* and led to multiple interpretations.", "translation": "그 진술은 *모호해서* 여러 해석을 낳았습니다." }
+{ "word": "analytical", "meaning": "분석적인", "level": 8, "pronunciation": "애널리티컬", "example": "His *analytical* approach helped solve the problem efficiently.", "translation": "그의 *분석적인* 접근 방식은 문제를 효율적으로 해결하는 데 도움이 되었습니다." }
+{ "word": "comprehensive", "meaning": "포괄적인", "level": 9, "pronunciation": "컴프리헨시브", "example": "A *comprehensive* strategy was developed to address the issues.", "translation": "문제를 해결하기 위한 *포괄적인* 전략이 개발되었습니다." }
+{ "word": "correlation", "meaning": "상관관계", "level": 9, "pronunciation": "코릴레이션", "example": "There is a strong *correlation* between exercise and health.", "translation": "운동과 건강 간에는 강한 *상관관계가* 있습니다." }
+{ "word": "ontological", "meaning": "존재론적인", "level": 10, "pronunciation": "온톨러지컬", "example": "The philosopher's lecture covered *ontological* arguments about existence.", "translation": "철학자의 강의는 존재에 대한 *존재론적인* 논증을 다루었습니다." }
+{ "word": "systemic", "meaning": "체계적인", "level": 10, "pronunciation": "시스테믹", "example": "The report highlighted *systemic* failures needing immediate attention.", "translation": "그 보고서는 즉각적인 주의가 필요한 *체계적인* 실패를 강조했습니다." }
