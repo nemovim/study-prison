@@ -99,7 +99,7 @@
     }
 
     function returnToMain() {
-        window.location.href = '/';
+        window.location.href = '/voca';
     }
 
     async function enterKey(e: KeyboardEvent) {
@@ -201,7 +201,7 @@
                 {#if !quizEnds}
                     <button onclick={nextQuiz} id="next-btn">다음</button>
                 {:else}
-                    <a data-sveltekit-reload href="/" id="return-btn">돌아가기</a>
+                    <a data-sveltekit-reload href="/voca" id="return-btn">돌아가기</a>
                     <!-- <button id="return-btn" onclick={returnToMain}
                         >돌아가기</button
                     > -->

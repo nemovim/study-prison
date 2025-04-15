@@ -112,7 +112,7 @@ export default class QuizMachine {
 
     async guessCorrectAnswer() {
         // Fetch the post request
-        const result = await fetch('/api/review', {
+        const result = await fetch('/voca/api/review', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -127,7 +127,7 @@ export default class QuizMachine {
 
     async guessWrongAnswer() {
         this.#wrongVocaArr.push(this.#vocaArr[this.idx]);
-        const result = await fetch('/api/review', {
+        const result = await fetch('/voca/api/review', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
