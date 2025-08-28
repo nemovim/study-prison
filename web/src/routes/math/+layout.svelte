@@ -49,8 +49,8 @@
 
     h1 {
         font-size: 6rem;
-        margin-bottom: 5rem;
-        margin-top: 5rem;
+        margin-bottom: 3rem;
+        margin-top: 3rem;
         text-shadow: 0 0.5rem 0.5rem rgb(200, 200, 200);
     }
 

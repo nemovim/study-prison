@@ -1,22 +1,34 @@
 <script lang="ts">
-    import { getSectionName } from '$lib/math/quiz';
+    import { getSectionName, getMaxSection } from "$lib/math/quiz";
 </script>
 
-<p>• 중학교 1학년</p>
-<article>
-    {#each [1, 2, 3, 4, 5, 6] as i, idx}
-    <div>
-        <a class='tag' href="/math/middle?section={i}">{idx+1}. {getSectionName(i)}</a>
-        <a class='tag test-tag' href="/math/middle?section={i}&isTest=true">[단원 평가]</a>
-    </div>
-    {/each}
-</article>
+{#each [5, 6, 7] as grade}
+    {#if grade <= 6}
+        <p>• 초등학교 {grade}학년</p>
+    {:else}
+        <p>• 중학교 {grade - 6}학년</p>
+    {/if}
+    <article>
+        {#each [...Array(getMaxSection(grade))].map((_,i) => i + 1) as section}
+            <div>
+                <a class="tag" href="/math/quiz?grade={grade}&section={section}"
+                    >{section}. {getSectionName(grade, section)}</a
+                >
+                <a
+                    class="tag test-tag"
+                    href="/math/quiz?grade={grade}&section={section}&isTest=true"
+                    >[단원 평가]</a
+                >
+            </div>
+        {/each}
+    </article>
+{/each}
 
 <style lang="scss">
     p {
         font-weight: bold;
     }
-    article{
+    article {
         display: flex;
         flex-direction: column;
     }

@@ -1,16 +1,23 @@
+
 <script lang="ts">
+    import { getMathjaxSvg } from '$lib/math/mathjax';
     import { getMaxLevel, getSectionName, makeQuiz } from '$lib/math/quiz';
-    import { isSameExpressionString } from '$lib/math/utils';
+    import { areSameExpressionStrings, getRandomInt, parseExpressionString, stringifyExpression } from '$lib/math/utils';
     import { onMount } from 'svelte';
     import { page } from '$app/state';
-
+    let grade = $derived<number>(
+        Number(page.url.searchParams.get('grade'))
+    );
     let section = $derived<number>(
         Number(page.url.searchParams.get('section'))
+    );
+    let startLevel = $derived<number>(
+        Number(page.url.searchParams.get('level'))
     );
     let isTest = $derived<boolean>(
         page.url.searchParams.get('isTest') === 'true'
     );
-    let maxLevel = $derived<number>(getMaxLevel(section));
+    let maxLevel = $derived<number>(getMaxLevel(grade, section));
     let quizCnt = $state<number>(0);
     let score = $state<number>(0);
     let wrongCnt = $state<number>(0);
@@ -38,9 +45,14 @@
     let isDisabledInput = $state<boolean>(false);
     let isDisabledBtn = $state<boolean>(false);
     let btnText = $state<string>('제출');
+    
+    $effect(() => {
+        resultHtml = parseMathString(userAnswer.trim() === '' ? '' :stringifyExpression(parseExpressionString(userAnswer.trim())));
+    });
 
-    function parseMathString(quizString: string): string {
-        return quizString.replace(/\^([0-9]+)/g, '<sup>$1</sup>');
+    function parseMathString(mathString: string): string {
+        if (mathString.startsWith('+')) mathString = mathString.slice(1);
+        return getMathjaxSvg(mathString);
     }
 
     function doNext() {
@@ -64,7 +76,7 @@
     }
 
     function submitAnswer() {
-        if (isSameExpressionString(userAnswer.trim(), quizAnswer)) {
+        if (areSameExpressionStrings(userAnswer.trim(), quizAnswer)) {
             resultHtml = `<span style="color: green">정답: <span class="math">${parseMathString(quizAnswer)}</span> (+1점)</span>`;
             score += 1;
         } else {
@@ -75,10 +87,11 @@
     }
 
     function showQuiz() {
-        let { quiz, answer } = makeQuiz(level, section);
+        let { quiz, answer } = makeQuiz(level, grade, section);
         quizString = quiz;
         quizAnswer = answer;
         userAnswer = '';
+        resultHtml = '';
         quizCnt += 1;
     }
 
@@ -88,19 +101,22 @@
     }
 
     onMount(() => {
+        if (startLevel > 0) score = (startLevel-1) * 15;
         showQuiz();
+        resultHtml = parseMathString('');
     });
+
 </script>
 
 <svelte:window onkeydown={keyEvent} />
 
-{#if getSectionName(section) === '메인' || (section !== 5 && section !== 3)}
+{#if getSectionName(grade, section) === '메인'}
     <p>존재하지 않는 단원입니다.</p>
 {:else}
     <div id="quiz-info-div">
         <p>No. {quizCnt}</p>
         <div id="tags-div">
-            <p class="tag" id="section-tag">{getSectionName(section)}</p>
+            <p class="tag" id="section-tag">{getSectionName(grade, section)}</p>
             {#if level > maxLevel}
                 <p class="tag">단원 평가</p>
             {:else}
@@ -161,10 +177,10 @@
     #quiz-div {
         position: relative;
         #quiz-p {
-            font-size: 8rem;
+            font-size: 6rem;
             margin: 0;
             margin-top: 3rem;
-            margin-bottom: 4rem;
+            margin-bottom: 3rem;
             text-align: center;
             font-weight: bold;
             border: none;
@@ -174,8 +190,8 @@
             border: none;
             text-align: center;
             margin: 0;
-            position: absolute;
-            bottom: 0;
+            // position: absolute;
+            // bottom: 0;
             width: 100%;
         }
         margin-bottom: 3rem;
