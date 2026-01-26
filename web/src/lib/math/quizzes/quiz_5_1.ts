@@ -1,89 +1,39 @@
-import {
-    getRandomFractionTerm,
-    getRandomInt,
-    stringifyFractionTerm,
-    type GenerationConfig,
-    multiplyFractionTerms,
-    clearFractionTerm,
-    addSimilarFractionTerms
-} from '../utils.js';
+import { fractionMath } from '../math.js';
 
-// 분수의 덧셈
-export default function makeQuiz(level: number): { quiz: string, answer: string } {
-    let quiz = '', answer = '';
+import { getRandomInt } from '../utils.js';
+import type { QuizModule } from '../types.js';
 
-    const getQuizConfig = (level: number): GenerationConfig => {
-        const baseConfig: GenerationConfig = {
-            symbolMin: 0,
-            symbolMax: 0,
-            symbolPowerMin: 0,
-            symbolPowerMax: 0,
-            symbolCnt: 0,
-            allowNumericFraction: true
-        };
+const quizConfigs = {
+  1: { termCnt: 2, numMin: 1, numMax: 1, denMin: 2, denMax: 8 },
+  2: { termCnt: 2, numMin: 1, numMax: 2, denMin: 2, denMax: 6 },
+  3: { termCnt: 2, numMin: 1, numMax: 6, denMin: 1, denMax: 3 },
+  4: { termCnt: 2, numMin: 1, numMax: 6, denMin: 1, denMax: 8 },
+  5: { termCnt: 3, numMin: 1, numMax: 4, denMin: 1, denMax: 4 },
+} as const;
 
-        switch (level) {
-            case 1: return {
-                ...baseConfig,
-                termCnt: 2,
-                numIntMin: 1,
-                numIntMax: 1,
-                denIntMin: 2,
-                denIntMax: 8,
-            };
-            case 2: return {
-                ...baseConfig,
-                termCnt: 2,
-                numIntMin: 1,
-                numIntMax: 2,
-                denIntMin: 2,
-                denIntMax: 6,
-            };
-            case 3: return {
-                ...baseConfig,
-                termCnt: 2,
-                numIntMin: 1,
-                numIntMax: 6,
-                denIntMin: 1,
-                denIntMax: 3,
-            };
-            case 4: return {
-                ...baseConfig,
-                termCnt: 2,
-                numIntMin: 1,
-                numIntMax: 6,
-                denIntMin: 1,
-                denIntMax: 8,
-            };
-            case 5: return {
-                ...baseConfig,
-                termCnt: 3,
-                numIntMin: 1,
-                numIntMax: 4,
-                denIntMin: 1,
-                denIntMax: 4,
-            };
-            default: return getQuizConfig(getRandomInt(1, 5));
-        }
-    };
+const maxLevel = Object.keys(quizConfigs).length;
 
-    const config: GenerationConfig = getQuizConfig(level);
-    const fracTerm1 = getRandomFractionTerm(config);
-    // config.numIntMax = 1;
-    // if (level === 1) {
-    //     config.denIntMin = 1;
-    //     config.denIntMax = 1;
-    // } else if (level === 2) {
-    //     config.numIntMax = 1;
-    // } else {
-    //     return makeQuiz(getRandomInt(1, 4));
-    // }
-    const fracTerm2 = getRandomFractionTerm(config);
+function makeQuiz(level: number): { quiz: string, answer: string } {
+    if (level > maxLevel) level = getRandomInt(1, maxLevel);
+    const config = quizConfigs[level as keyof typeof quizConfigs];
 
-    quiz = `${stringifyFractionTerm(fracTerm1).slice(1)}+${stringifyFractionTerm(fracTerm2).slice(1)}=?`;
-    const result = addSimilarFractionTerms(fracTerm1, fracTerm2);
-    answer = stringifyFractionTerm(clearFractionTerm(result));
-    if (answer.startsWith('+')) answer = answer.slice(1);
+    const terms = [];
+    for (let i = 0; i < config.termCnt; i++) {
+        terms.push(fractionMath.parse(getRandomInt(config.numMin, config.numMax) + '/' + getRandomInt(config.denMin, config.denMax)));
+    }
+
+    const quiz = terms.map(t => t.toTex()).join('+');
+    const answer = fractionMath.simplify(terms.map(t => t.toString()).join('+')).toString();
 
     return { quiz, answer };
 }
+
+const quizModule: QuizModule = {
+    grade: 5,
+    section: 1,
+    name: '분수의 덧셈',
+    maxLevel,
+    makeQuiz,
+};
+
+export default quizModule;

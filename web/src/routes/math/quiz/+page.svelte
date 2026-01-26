@@ -1,30 +1,43 @@
-
 <script lang="ts">
-    import { getMathjaxSvg } from '$lib/math/mathjax';
-    import { getMaxLevel, getSectionName, makeQuiz } from '$lib/math/quiz';
-    import { areSameExpressionStrings, getRandomInt, parseExpressionString, stringifyExpression } from '$lib/math/utils';
-    import { onMount } from 'svelte';
-    import { page } from '$app/state';
-    let grade = $derived<number>(
-        Number(page.url.searchParams.get('grade'))
-    );
+    import type { QuizModule } from "$lib/math/types";
+    import { getMathjaxSvgByString, getMathjaxSvgByTex } from "$lib/math/mathjax";
+    import { getQuizModule, isCorrect } from "$lib/math/quiz";
+    import { onMount } from "svelte";
+    import { page } from "$app/state";
+
+    const emptyQuizModule: QuizModule = {
+        grade: -1,
+        section: -1,
+        name: "",
+        maxLevel: 0,
+        makeQuiz: () => ({ quiz: "", answer: "" }),
+    };
+
+    const scorePerLevel = 10;
+
+    let grade = $derived<number>(Number(page.url.searchParams.get("grade")));
     let section = $derived<number>(
-        Number(page.url.searchParams.get('section'))
+        Number(page.url.searchParams.get("section")),
     );
     let startLevel = $derived<number>(
-        Number(page.url.searchParams.get('level'))
+        Number(page.url.searchParams.get("level")),
+    );
+    let startScore = $derived<number>(
+        Number(page.url.searchParams.get("score")),
     );
     let isTest = $derived<boolean>(
-        page.url.searchParams.get('isTest') === 'true'
+        page.url.searchParams.get("isTest") === "true",
     );
-    let maxLevel = $derived<number>(getMaxLevel(grade, section));
+
+    let quizModule = $derived<QuizModule>(getQuizModule(grade, section) ?? emptyQuizModule);
+    let maxLevel = $derived<number>(quizModule.maxLevel);
     let quizCnt = $state<number>(0);
     let score = $state<number>(0);
     let wrongCnt = $state<number>(0);
     let level = $derived.by<number>(() => {
         if (isTest) return maxLevel + 1;
 
-        let temp = Math.floor(score / 15) + 1;
+        let temp = Math.floor(score / scorePerLevel) + 1;
         if (temp <= 0) {
             temp = 1;
         }
@@ -33,34 +46,29 @@
     });
 
     let answerInput = $state<HTMLElement>();
-    let userAnswer = $state<string>('');
+    let userAnswer = $state<string>("");
 
-    let quizString = $state<string>('');
-    let quizAnswer = $state<string>('');
-    let resultHtml = $state<string>('');
+    let quizString = $state<string>("");
+    let quizAnswer = $state<string>("");
+    let resultHtml = $state<string>("");
 
     let checkAnswer = $state<boolean>(false);
     let isWating = $state<boolean>(false);
 
     let isDisabledInput = $state<boolean>(false);
     let isDisabledBtn = $state<boolean>(false);
-    let btnText = $state<string>('제출');
-    
-    $effect(() => {
-        resultHtml = parseMathString(userAnswer.trim() === '' ? '' :stringifyExpression(parseExpressionString(userAnswer.trim())));
-    });
+    let btnText = $state<string>("제출");
 
-    function parseMathString(mathString: string): string {
-        if (mathString.startsWith('+')) mathString = mathString.slice(1);
-        return getMathjaxSvg(mathString);
-    }
+    $effect(() => {
+        resultHtml = '입력: ' + getMathjaxSvgByString(userAnswer.trim() || '0');
+    });
 
     function doNext() {
         if (!checkAnswer && !isWating) {
             submitAnswer();
             isDisabledBtn = true;
             isDisabledInput = true;
-            btnText = '다음';
+            btnText = "다음";
             checkAnswer = true;
             isWating = true;
             setTimeout(() => {
@@ -70,53 +78,53 @@
         } else if (!isWating) {
             showQuiz();
             isDisabledInput = false;
-            btnText = '제출';
+            btnText = "제출";
             checkAnswer = false;
         }
     }
 
     function submitAnswer() {
-        if (areSameExpressionStrings(userAnswer.trim(), quizAnswer)) {
-            resultHtml = `<span style="color: green">정답: <span class="math">${parseMathString(quizAnswer)}</span> (+1점)</span>`;
+        if (isCorrect(userAnswer.trim() || '0', quizAnswer)) {
+            resultHtml = `<span style="color: green">정답: <span class="math">${getMathjaxSvgByString(quizAnswer)}</span> (+1점)</span>`;
             score += 1;
         } else {
-            resultHtml = `<span style="color: red">정답: <span class="math">${parseMathString(quizAnswer)}</span> (-2점)</span>`;
+            resultHtml = `<span style="color: red">정답: <span class="math">${getMathjaxSvgByString(quizAnswer)}</span> (-2점)</span>`;
             score -= 2;
             wrongCnt += 1;
         }
     }
 
-    function showQuiz() {
-        let { quiz, answer } = makeQuiz(level, grade, section);
+    const showQuiz = () => {
+        const { quiz, answer } = quizModule.makeQuiz(level);
         quizString = quiz;
         quizAnswer = answer;
-        userAnswer = '';
-        resultHtml = '';
+        userAnswer = "";
+        resultHtml = "";
         quizCnt += 1;
-    }
+    };
 
     function keyEvent(event: KeyboardEvent) {
-        if (event.key === 'Enter') doNext();
+        if (event.key === "Enter") doNext();
         else answerInput?.focus();
     }
 
     onMount(() => {
-        if (startLevel > 0) score = (startLevel-1) * 15;
+        if (startScore > 0) score = startScore;
+        else if (startLevel > 0) score = (startLevel - 1) * scorePerLevel;
         showQuiz();
-        resultHtml = parseMathString('');
+        resultHtml = '입력: ' + getMathjaxSvgByString("0");
     });
-
 </script>
 
 <svelte:window onkeydown={keyEvent} />
 
-{#if getSectionName(grade, section) === '메인'}
+{#if quizModule.name === ""}
     <p>존재하지 않는 단원입니다.</p>
 {:else}
     <div id="quiz-info-div">
         <p>No. {quizCnt}</p>
         <div id="tags-div">
-            <p class="tag" id="section-tag">{getSectionName(grade, section)}</p>
+            <p class="tag" id="section-tag">{quizModule.name}</p>
             {#if level > maxLevel}
                 <p class="tag">단원 평가</p>
             {:else}
@@ -128,7 +136,7 @@
     </div>
 
     <div id="quiz-div">
-        <p id="quiz-p" class="math">{@html parseMathString(quizString)}</p>
+        <p id="quiz-p" class="math">{@html getMathjaxSvgByTex(quizString)}</p>
         <p id="answer-p">{@html resultHtml}</p>
     </div>
 

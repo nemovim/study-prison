@@ -1,18 +1,18 @@
 <script lang="ts">
-    import { getSectionName, getMaxSection } from "$lib/math/quiz";
+    import { getQuizModule, getMaxSection, quizModuleMap } from "$lib/math/quiz";
 </script>
 
-{#each [5, 6, 7] as grade}
+{#each quizModuleMap.keys() as grade}
     {#if grade <= 6}
         <p>• 초등학교 {grade}학년</p>
     {:else}
         <p>• 중학교 {grade - 6}학년</p>
     {/if}
     <article>
-        {#each [...Array(getMaxSection(grade))].map((_,i) => i + 1) as section}
+        {#each quizModuleMap.get(grade)!.keys() as section}
             <div>
                 <a class="tag" href="/math/quiz?grade={grade}&section={section}"
-                    >{section}. {getSectionName(grade, section)}</a
+                    >{section}. {getQuizModule(grade, section)!.name}</a
                 >
                 <a
                     class="tag test-tag"

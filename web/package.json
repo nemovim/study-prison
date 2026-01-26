@@ -29,6 +29,7 @@
 		"@auth/sveltekit": "^1.7.4",
 		"diff": "^7.0.0",
 		"mathjax-full": "^3.2.2",
+		"mathjs": "^15.1.0",
 		"mongoose": "^8.9.5",
 		"openai": "^4.78.1"
 	}

@@ -4,6 +4,7 @@ import { SVG } from 'mathjax-full/js/output/svg'
 import { AllPackages } from 'mathjax-full/js/input/tex/AllPackages'
 import { liteAdaptor } from 'mathjax-full/js/adaptors/liteAdaptor'
 import { RegisterHTMLHandler } from 'mathjax-full/js/handlers/html'
+import { parse } from 'mathjs'
 
 const adaptor = liteAdaptor()
 RegisterHTMLHandler(adaptor)
@@ -19,11 +20,22 @@ const mathjax_options = {
   containerWidth: 1280
 }
 
-export function getMathjaxSvg(math: string): string {
-  const node = mathjax_document.convert(convertStringToMathjax(math), mathjax_options)
+export function getMathjaxSvgByTex(tex: string): string {
+  const node = mathjax_document.convert(tex, mathjax_options)
   return adaptor.innerHTML(node)
 }
 
-function convertStringToMathjax(str: string): string {
-  return str.replaceAll(/\(([0-9]+?)\/([0-9]+?)\)/g, '\\frac{$1}{$2}').replaceAll(/(?<=[a-zA-Z]+?)\^([0-9]+)/g, '^{$1}');
+export function getMathjaxSvgByString(math: string): string {
+  let tex: string;
+  try {
+    tex = parse(math).toTex();
+  } catch (e) {
+    tex = math;
+  }
+  if (tex === 'undefined') tex = '';
+
+  tex = tex.replaceAll('\\cdot', '\\times');
+
+  const node = mathjax_document.convert(tex, mathjax_options)
+  return adaptor.innerHTML(node)
 }
