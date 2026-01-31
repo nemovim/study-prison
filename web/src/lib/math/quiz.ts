@@ -1,14 +1,14 @@
 import type { QuizModule } from './types.js';
 
 import { parse, simplify, simplifyCore, symbolicEqual, simplifyConstant } from 'mathjs';
+import { fractionMath } from './math';
 
 import quizModule_5_1 from './quizzes/quiz_5_1.js';
-
 import quizModule_6_1 from './quizzes/quiz_6_1.js';
 import quizModule_6_2 from './quizzes/quiz_6_2.js';
-
 import quizModule_7_3 from './quizzes/quiz_7_3.js';
 import quizModule_7_4 from './quizzes/quiz_7_4.js';
+import quizModule_7_5 from './quizzes/quiz_7_5.js';
 
 export const quizModuleMap: Map<number, Map<number, QuizModule>> = new Map([
     [5, new Map([
@@ -20,7 +20,8 @@ export const quizModuleMap: Map<number, Map<number, QuizModule>> = new Map([
     ])],
     [7, new Map([
         [3, quizModule_7_3],
-        [4, quizModule_7_4]
+        [4, quizModule_7_4],
+        [5, quizModule_7_5]
     ])]
 ]);
 
@@ -34,23 +35,31 @@ export function getQuizModule(grade: number, section: number): QuizModule | null
 }
 
 export function isCorrect(userAnswer: string, quizAnswer: string): boolean {
+    if (!userAnswer) return false;
 
-    console.log('parse(userAnswer):', parse(userAnswer).toString());
-    console.log('simplifyConstant(userAnswer):', simplifyConstant(userAnswer).toString())
-    console.log('simplifyCore(userAnswer):', simplifyCore(userAnswer).toString())
+    // 1. 미완성 입력 방어 (/, ^, -, + 등으로 끝나면 아직 판단하지 않음)
+    const incompleteMarkers = ['/', '^', '-', '+'];
+    if (incompleteMarkers.some(marker => userAnswer.trim().endsWith(marker))) {
+        return false;
+    }
 
-    userAnswer = simplifyCore(userAnswer.replace(/([a-zA-Z])(?=[a-zA-Z])/g, '$1*')).toString();
+    try {
 
-    const isSimplified = userAnswer.split(/\+|-/).length === simplify(userAnswer).toString().split(/\+|-/).length;
-    console.log('isSimplified:', isSimplified)
+        userAnswer = simplifyCore(userAnswer.replace(/([a-zA-Z])(?=[a-zA-Z])/g, '$1*')).toString();
 
-    const isReduced = parse(userAnswer).toString() === simplifyConstant(userAnswer).toString() || parse(userAnswer).toString() === simplifyConstant(userAnswer, { exactFractions: false }).toString();
-    console.log('isReduced:', isReduced);
+        const isSimplified = userAnswer.split(/\+|-/).length === simplify(userAnswer).toString().split(/\+|-/).length;
 
-    const isEqual = symbolicEqual(parse(userAnswer), parse(quizAnswer))
-    console.log('isEqual:', isEqual);
+        const isReduced = parse(userAnswer).toString() === simplifyConstant(userAnswer).toString() || parse(userAnswer).toString() === simplifyConstant(userAnswer, { exactFractions: false }).toString();
 
-    const result = isReduced && isSimplified && isEqual;
+        const isEqual = symbolicEqual(parse(userAnswer), parse(quizAnswer))
 
-    return result;
+        console.log(`[채점] Equal: ${isEqual}, Reduced: ${isReduced}, Simplified: ${isSimplified}`);
+
+        const result = isReduced && isSimplified && isEqual;
+        return result;
+
+    } catch (e) {
+        return false;
+    }
+
 }

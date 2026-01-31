@@ -1,6 +1,6 @@
 <script lang="ts">
     import type { QuizModule } from "$lib/math/types";
-    import { getMathjaxSvgByString, getMathjaxSvgByTex } from "$lib/math/mathjax";
+    import { getMathjaxSvgByString, getMathjaxSvgByTex, displayAnswerAsTex } from "$lib/math/mathjax";
     import { getQuizModule, isCorrect } from "$lib/math/quiz";
     import { onMount } from "svelte";
     import { page } from "$app/state";
@@ -60,11 +60,12 @@
     let btnText = $state<string>("제출");
 
     $effect(() => {
-        resultHtml = '입력: ' + getMathjaxSvgByString(userAnswer.trim() || '0');
+        resultHtml = '입력: ' + getMathjaxSvgByString(displayAnswerAsTex(userAnswer.trim()));
     });
 
     function doNext() {
         if (!checkAnswer && !isWating) {
+            if (userAnswer.trim() === "") return;
             submitAnswer();
             isDisabledBtn = true;
             isDisabledInput = true;
@@ -84,11 +85,11 @@
     }
 
     function submitAnswer() {
-        if (isCorrect(userAnswer.trim() || '0', quizAnswer)) {
-            resultHtml = `<span style="color: green">정답: <span class="math">${getMathjaxSvgByString(quizAnswer)}</span> (+1점)</span>`;
+        if (isCorrect(userAnswer.trim(), quizAnswer)) {
+            resultHtml = `<span style="color: green">정답: <span class="math">${getMathjaxSvgByString(displayAnswerAsTex(quizAnswer))}</span> (+1점)</span>`;
             score += 1;
         } else {
-            resultHtml = `<span style="color: red">정답: <span class="math">${getMathjaxSvgByString(quizAnswer)}</span> (-2점)</span>`;
+            resultHtml = `<span style="color: red">정답: <span class="math">${getMathjaxSvgByString(displayAnswerAsTex(quizAnswer))}</span> (-2점)</span>`;
             score -= 2;
             wrongCnt += 1;
         }
@@ -112,7 +113,7 @@
         if (startScore > 0) score = startScore;
         else if (startLevel > 0) score = (startLevel - 1) * scorePerLevel;
         showQuiz();
-        resultHtml = '입력: ' + getMathjaxSvgByString("0");
+        resultHtml = '입력: ';
     });
 </script>
 

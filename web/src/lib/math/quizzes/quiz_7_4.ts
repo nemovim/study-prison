@@ -1,64 +1,62 @@
-
 import { fractionMath, decimalMath } from '../math.js';
-
-import { getRandomInt, getRandomFloat } from '../utils.js';
+import { getRandomInt, getRandomFloat, getCleanTex, generateRandomPattern, getQuizConfig } from '../utils.js';
 import type { QuizModule } from '../types.js';
 
 const quizConfigs = {
-    1: { termCnt: 2, numMin: -9, numMax: 6, denMin: 1, denMax: 1, precision: 0 },
-    2: { termCnt: 3, numMin: -6, numMax: 4, denMin: 1, denMax: 1, precision: 0 },
-    3: { termCnt: 2, numMin: -3, numMax: 2, denMin: 1, denMax: 6, precision: 0 },
-    4: { termCnt: 2, numMin: -1, numMax: 1, denMin: 1, denMax: 1, precision: 1 },
-    5: { termCnt: 2, numMin: -9, numMax: 9, denMin: 1, denMax: 9, precision: 0 },
-    6: { termCnt: 2, numMin: -2, numMax: 2, denMin: 1, denMax: 1, precision: 1 },
-    7: { termCnt: 3, numMin: -3, numMax: 2, denMin: 1, denMax: 6, precision: 0 },
-    8: { termCnt: 3, numMin: -1.5, numMax: 1.5, denMin: 1, denMax: 1, precision: 1 },
-    9: { termCnt: 2, numMin: -2, numMax: 2, denMin: 1, denMax: 1, precision: 1 },
+    // [1-3] 정수 곱셈 기초
+    1: { termCnt: 2, numMin: -9, numMax: 9, denMin: 1, denMax: 1, precision: 0 },
+    2: { termCnt: 3, numMin: -5, numMax: 5, denMin: 1, denMax: 1, precision: 0 }, // 3개 항
+
+    // [4-6] 기초 분수/소수 곱셈
+    4: { termCnt: 2, numMin: -1.2, numMax: 1.2, denMin: 1, denMax: 1, precision: 1 },
+    5: { termCnt: 2, numMin: -5, numMax: 5, denMin: 2, denMax: 5, precision: 0 },    // 약분 연습
+    6: { termCnt: 2, numMin: -0.9, numMax: 0.9, denMin: 1, denMax: 1, precision: 2 }, // 소수 두 자리
+
+    // [7-9] 심화 및 혼합 계산
+    7: { termCnt: 3, numMin: -4, numMax: 4, denMin: 2, denMax: 6, precision: 0 },    // 분수 3개
+    8: { termCnt: 3, numMin: -1.5, numMax: 1.5, denMin: 1, denMax: 1, precision: 1 }, // 소수 3개
+    9: { termCnt: 3, numMin: -3, numMax: 3, denMin: 2, denMax: 5, precision: 1 },    // 혼합 (분모 2,4,5 위주)
 } as const;
 
 const maxLevel = Object.keys(quizConfigs).length;
 
+function formatMultiplication(tex: string): string {
+    // 곱셈은 첫 번째 항이라도 음수면 괄호를 치는 것이 표준 표기법인 경우가 많음
+    return tex.startsWith('-') ? `\\left(${tex}\\right)` : tex;
+}
+
 function makeQuiz(level: number): { quiz: string, answer: string } {
-    if (level > maxLevel) level = getRandomInt(1, maxLevel);
-    const config = quizConfigs[level as keyof typeof quizConfigs];
+    const [activeLevel, config] = getQuizConfig(level, quizConfigs);
+    const terms: string[] = [];
+    const expressions: string[] = [];
 
-    const terms = [];
+    const typePattern = (activeLevel >= 9)
+        ? generateRandomPattern(['F', 'D'], config.termCnt)
+        : new Array(config.termCnt).fill(config.precision === 0 ? 'F' : 'D');
+
     for (let i = 0; i < config.termCnt; i++) {
-        terms.push(`(${getRandomFloat(config.numMin, config.numMax, config.precision, false)}/${getRandomFloat(config.denMin, config.denMax, config.precision, false)})`);
+        const type = typePattern[i];
+        let den = (activeLevel >= 9 && type === 'F')
+            ? [2, 4, 5, 10][getRandomInt(0, 3)]
+            : getRandomInt(config.denMin, config.denMax);
+
+        const num = type === 'F'
+            ? getRandomInt(config.numMin, config.numMax)
+            : getRandomFloat(config.numMin, config.numMax, config.precision, false);
+
+        const termStr = `(${num}/${den})`;
+        terms.push(termStr);
+        expressions.push(formatMultiplication(getCleanTex(termStr, type)));
     }
 
-    if (config.precision === 0) {
-        const quiz = terms.map((term, i) => {
-            const parsedTerm = fractionMath.simplifyCore(term).toTex();
-            if (i !== 0 && parsedTerm.startsWith('-')) return `(${parsedTerm})`;
-            return parsedTerm;
-        }).join('\\times');
-        const answer = fractionMath.simplify(terms.join('*')).toString();
-        return { quiz, answer };
-    } else {
-        if (level >= 9) {
-            const rand = getRandomInt(0, 1);
-            const quiz = terms.map((term, i) => {
-                let tex;
+    const fullExpr = terms.join('*');
+    const isFractionOutput = config.precision === 0 || activeLevel >= 9;
 
-                if (i % 2 === rand) tex = fractionMath.simplifyCore(term).toTex();
-                else tex = decimalMath.simplifyCore(term).toTex();
+    let answer = isFractionOutput
+        ? fractionMath.simplify(fullExpr).toString()
+        : decimalMath.simplify(fullExpr, {}, { exactFractions: false }).toString();
 
-                if (i !== 0 && tex.startsWith('-')) return `(${tex})`;
-                else return tex;
-            }).join('\\times');
-            const answer = fractionMath.simplify(terms.join('*')).toString();
-            return { quiz, answer };
-        } else {
-            const quiz = terms.map((term, i) => {
-                const parsedTerm = decimalMath.simplifyCore(term).toTex();
-                if (i !== 0 && parsedTerm.startsWith('-')) return `(${parsedTerm})`;
-                return parsedTerm;
-            }).join('\\times');
-            const answer = decimalMath.simplify(terms.join('*'), {}, { exactFractions: false }).toString();
-            return { quiz, answer };
-        }
-    }
+    return { quiz: expressions.join(' \\times '), answer: answer };
 }
 
 const quizModule: QuizModule = {
