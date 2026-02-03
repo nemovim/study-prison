@@ -3,7 +3,7 @@ import { fractionMath, decimalMath } from './math.js';
 /**
  * [min, max] 범위의 정수 반환
  */
-export function getRandomInt(min: number, max: number, allowZero = true): number {
+export function getRandomInt(min: number, max: number, allowZero = false): number {
     if (min > max) throw new Error('min cannot be greater than max');
     
     // 가능한 정수 존재 여부 체크 (0 제외 시)
@@ -22,7 +22,7 @@ export function getRandomInt(min: number, max: number, allowZero = true): number
 /**
  * [min, max] 범위의 실수 반환
  */
-export function getRandomFloat(min: number, max: number, precision = 2, allowZero = true): number {
+export function getRandomFloat(min: number, max: number, precision = 2, allowZero = false): number {
     if (min > max) throw new Error('min cannot be greater than max');
     if (!allowZero && min === 0 && max === 0) {
         throw new Error('min and max cannot both be 0 when allowZero is false');

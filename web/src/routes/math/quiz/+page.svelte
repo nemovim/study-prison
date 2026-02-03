@@ -28,6 +28,9 @@
     let isTest = $derived<boolean>(
         page.url.searchParams.get("isTest") === "true",
     );
+    let practiceLevel = $derived<number>(
+        Number(page.url.searchParams.get("practice")),
+    );
 
     let quizModule = $derived<QuizModule>(getQuizModule(grade, section) ?? emptyQuizModule);
     let maxLevel = $derived<number>(quizModule.maxLevel);
@@ -36,6 +39,7 @@
     let wrongCnt = $state<number>(0);
     let level = $derived.by<number>(() => {
         if (isTest) return maxLevel + 1;
+        if (practiceLevel > 0) return practiceLevel;
 
         let temp = Math.floor(score / scorePerLevel) + 1;
         if (temp <= 0) {
@@ -128,6 +132,9 @@
             <p class="tag" id="section-tag">{quizModule.name}</p>
             {#if level > maxLevel}
                 <p class="tag">단원 평가</p>
+            {:else if practiceLevel > 0}
+                <p class="tag">반복 학습</p>
+                <p class="tag">{practiceLevel}단계</p>
             {:else}
                 <p class="tag">{level}단계</p>
             {/if}

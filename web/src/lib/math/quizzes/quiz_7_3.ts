@@ -28,7 +28,7 @@ const maxLevel = Object.keys(quizConfigs).length;
 
 function formatAddition(tex: string, isFirst: boolean): string {
     if (isFirst) return tex;
-    
+
     if (tex.startsWith('-')) {
         const absTex = tex.substring(1);
         // 50% 확률로 뺄셈으로 표현하거나, 더하기 괄호로 표현
@@ -41,29 +41,38 @@ function makeQuiz(level: number): { quiz: string, answer: string } {
     const [activeLevel, config] = getQuizConfig(level, quizConfigs);
     const terms: string[] = [];
     const expressions: string[] = [];
-    
-    const typePattern = (activeLevel === 11) 
-        ? generateRandomPattern(['F', 'D'], config.termCnt) 
+
+    const typePattern = (activeLevel === 11)
+        ? generateRandomPattern(['F', 'D'], config.termCnt)
         : new Array(config.termCnt).fill(config.precision === 0 ? 'F' : 'D');
+
+    // makeQuiz 함수 내부 수정
 
     for (let i = 0; i < config.termCnt; i++) {
         const type = typePattern[i];
-        let den = (activeLevel === 11 && type === 'F') 
-            ? [2, 4, 5, 10][getRandomInt(0, 3)] 
-            : getRandomInt(config.denMin, config.denMax);
-        
-        const num = type === 'F' 
-            ? getRandomInt(config.numMin, config.numMax)
-            : getRandomFloat(config.numMin, config.numMax, config.precision, false);
 
-        const termStr = `(${num}/${den})`;
-        terms.push(termStr);
-        expressions.push(formatAddition(getCleanTex(termStr, type), i === 0));
+        if (type === 'D') {
+            // [소수 항] 분모 없이 숫자만 생성
+            const val = getRandomFloat(config.numMin, config.numMax, config.precision, false);
+            terms.push(val.toString()); // 계산용 (예: "1.9")
+            expressions.push(formatAddition(val.toString(), i === 0)); // 퀴즈용
+        } else {
+            // [분수 항] 기존처럼 분수 생성
+            let den = (activeLevel === 11)
+                ? [2, 4, 5, 10][getRandomInt(0, 3)]
+                : getRandomInt(config.denMin, config.denMax);
+
+            const num = getRandomInt(config.numMin, config.numMax);
+
+            const termStr = `(${num}/${den})`;
+            terms.push(termStr); // 계산용 (예: "(2/3)")
+            expressions.push(formatAddition(getCleanTex(termStr, 'F'), i === 0)); // 퀴즈용
+        }
     }
 
     const fullExpr = terms.join('+');
     const isFractionOutput = config.precision === 0 || activeLevel === 11;
-    
+
     let answer = isFractionOutput
         ? fractionMath.simplify(fullExpr).toString()
         : decimalMath.simplify(fullExpr, {}, { exactFractions: false }).toString();
