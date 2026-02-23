@@ -1,6 +1,10 @@
 <script lang="ts">
     import type { QuizModule } from "$lib/math/types";
-    import { getMathjaxSvgByString, getMathjaxSvgByTex, displayAnswerAsTex } from "$lib/math/mathjax";
+    import {
+        getMathjaxSvgByString,
+        getMathjaxSvgByTex,
+        displayAnswerAsTex,
+    } from "$lib/math/mathjax";
     import { getQuizModule, isCorrect } from "$lib/math/quiz";
     import { onMount } from "svelte";
     import { page } from "$app/state";
@@ -32,21 +36,31 @@
         Number(page.url.searchParams.get("practice")),
     );
 
-    let quizModule = $derived<QuizModule>(getQuizModule(grade, section) ?? emptyQuizModule);
+    let isRetry = $state<boolean>(false);
+    let animClass = $state<string>("");
+
+    const triggerAnim = (className: string) => {
+        animClass = className;
+        setTimeout(() => {
+            animClass = "";
+        }, 600); // 애니메이션 종료 후 초기화
+    };
+
+    let quizModule = $derived<QuizModule>(
+        getQuizModule(grade, section) ?? emptyQuizModule,
+    );
     let maxLevel = $derived<number>(quizModule.maxLevel);
     let quizCnt = $state<number>(0);
     let score = $state<number>(0);
     let wrongCnt = $state<number>(0);
+
     let level = $derived.by<number>(() => {
         if (isTest) return maxLevel + 1;
         if (practiceLevel > 0) return practiceLevel;
 
-        let temp = Math.floor(score / scorePerLevel) + 1;
-        if (temp <= 0) {
-            temp = 1;
-        }
-        if (temp > maxLevel) temp = maxLevel + 1;
-        return temp;
+        // 점수를 기반으로 한 단계 계산을 좀 더 직관적으로
+        const calculatedLevel = Math.floor(score / scorePerLevel) + 1;
+        return Math.max(1, Math.min(calculatedLevel, maxLevel + 1));
     });
 
     let answerInput = $state<HTMLElement>();
@@ -59,47 +73,48 @@
     let checkAnswer = $state<boolean>(false);
     let isWating = $state<boolean>(false);
 
-    let isDisabledInput = $state<boolean>(false);
-    let isDisabledBtn = $state<boolean>(false);
+    let isInputDisabled = $state<boolean>(false);
+    let isBtnDisabled = $state<boolean>(false);
     let btnText = $state<string>("제출");
 
     $effect(() => {
-        resultHtml = '입력: ' + getMathjaxSvgByString(displayAnswerAsTex(userAnswer.trim()));
+        resultHtml =
+            "입력: " +
+            getMathjaxSvgByString(displayAnswerAsTex(userAnswer.trim()));
     });
 
-    function doNext() {
-        if (!checkAnswer && !isWating) {
-            if (userAnswer.trim() === "") return;
-            submitAnswer();
-            isDisabledBtn = true;
-            isDisabledInput = true;
-            btnText = "다음";
-            checkAnswer = true;
-            isWating = true;
-            setTimeout(() => {
-                isDisabledBtn = false;
-                isWating = false;
-            }, 1000);
-        } else if (!isWating) {
-            showQuiz();
-            isDisabledInput = false;
-            btnText = "제출";
-            checkAnswer = false;
+    $effect(() => {
+        if (!isInputDisabled && answerInput) {
+            answerInput.focus();
         }
-    }
+    });
 
-    function submitAnswer() {
+    const submitAnswer = (): void => {
         if (isCorrect(userAnswer.trim(), quizAnswer)) {
-            resultHtml = `<span style="color: green">정답: <span class="math">${getMathjaxSvgByString(displayAnswerAsTex(quizAnswer))}</span> (+1점)</span>`;
-            score += 1;
+            if (!isRetry) {
+                resultHtml = `<span style="color: green">정답: <span class="math">${getMathjaxSvgByString(displayAnswerAsTex(quizAnswer))}</span> (+1점)</span>`;
+                score += 1;
+                triggerAnim("success");
+            } else {
+                resultHtml = `<span style="color: green">정답: <span class="math">${getMathjaxSvgByString(displayAnswerAsTex(quizAnswer))}</span> (+0점)</span>`;
+                isRetry = false;
+            }
         } else {
-            resultHtml = `<span style="color: red">정답: <span class="math">${getMathjaxSvgByString(displayAnswerAsTex(quizAnswer))}</span> (-2점)</span>`;
-            score -= 2;
-            wrongCnt += 1;
+            if (!isRetry) {
+                resultHtml = `<span style="color: orange">다시 한번 풀어보세요.</span>`;
+                isRetry = true;
+                triggerAnim("shake");
+            } else {
+                resultHtml = `<span style="color: red">정답: <span class="math">${getMathjaxSvgByString(displayAnswerAsTex(quizAnswer))}</span> (-2점)</span>`;
+                score -= 2;
+                wrongCnt += 1;
+                isRetry = false;
+                triggerAnim("fail");
+            }
         }
-    }
+    };
 
-    const showQuiz = () => {
+    const showQuiz = (): void => {
         const { quiz, answer } = quizModule.makeQuiz(level);
         quizString = quiz;
         quizAnswer = answer;
@@ -108,16 +123,47 @@
         quizCnt += 1;
     };
 
-    function keyEvent(event: KeyboardEvent) {
+    const doNext = (): void => {
+        if (isWating) return; // 대기 중일 때는 아무것도 하지 않음
+
+        if (!checkAnswer) {
+            if (userAnswer.trim() === "") return;
+
+            submitAnswer(); // 정답 체크 및 score 반영
+
+            isBtnDisabled = true;
+
+            if (!isRetry) {
+                isInputDisabled = true;
+                checkAnswer = true;
+                btnText = "다음";
+            }
+
+            // 버튼 연타 방지 쿨다운
+            isWating = true;
+            setTimeout(() => {
+                isWating = false;
+                isBtnDisabled = false;
+            }, 800);
+        } else {
+            // '다음' 버튼을 누른 경우
+            showQuiz();
+            isInputDisabled = false;
+            btnText = "제출";
+            checkAnswer = false;
+        }
+    };
+
+    const keyEvent = (event: KeyboardEvent): void => {
         if (event.key === "Enter") doNext();
         else answerInput?.focus();
-    }
+    };
 
     onMount(() => {
         if (startScore > 0) score = startScore;
         else if (startLevel > 0) score = (startLevel - 1) * scorePerLevel;
         showQuiz();
-        resultHtml = '입력: ';
+        resultHtml = "입력: ";
     });
 </script>
 
@@ -149,18 +195,17 @@
     </div>
 
     <div id="answer-div">
-        <!-- svelte-ignore a11y_autofocus -->
         <input
-            autofocus
             type="text"
             id="answer-input"
-            disabled={isDisabledInput}
+            class={animClass}
+            disabled={isInputDisabled}
             placeholder="답을 입력하세요"
             autocomplete="off"
             bind:this={answerInput}
             bind:value={userAnswer}
         />
-        <button id="submit-btn" disabled={isDisabledBtn} onclick={doNext}
+        <button id="submit-btn" disabled={isBtnDisabled} onclick={doNext}
             >{btnText}</button
         >
     </div>
@@ -168,6 +213,63 @@
 <p class="horizontal-line"></p>
 
 <style lang="scss">
+    /* 1. 재도전 시 (절레절레) */
+    @keyframes shake {
+        0%,
+        100% {
+            transform: translateX(0);
+        }
+        25% {
+            transform: translateX(-5px);
+        }
+        75% {
+            transform: translateX(5px);
+        }
+    }
+
+    /* 2. 정답일 때 (통통 튀기) */
+    @keyframes success-bounce {
+        0%,
+        100% {
+            transform: translateY(0);
+        }
+        50% {
+            transform: translateY(-7px);
+        }
+    }
+
+    /* 3. 완전히 틀렸을 때 (맥박 뛰듯 붉은색 강조) */
+    @keyframes final-fail {
+        0% {
+            background-color: white;
+        }
+        50% {
+            background-color: #ffebee;
+            border-color: #ff8a80;
+        }
+        100% {
+            background-color: white;
+        }
+    }
+
+    .shake {
+        animation: shake 0.4s ease-in-out;
+        outline: 1px solid orange !important; /* border 대신 outline 사용 */
+        outline-offset: -1px;
+    }
+
+    .success {
+        animation: success-bounce 0.4s ease-in-out;
+        outline: 1px solid #4caf50 !important;
+        outline-offset: -1px;
+    }
+
+    .fail {
+        animation: final-fail 0.6s ease-in-out;
+        outline: 1px solid #e57373 !important;
+        outline-offset: -1px;
+    }
+
     #quiz-info-div {
         display: flex;
         justify-content: space-between;
@@ -206,9 +308,11 @@
             border: none;
             text-align: center;
             margin: 0;
-            // position: absolute;
-            // bottom: 0;
             width: 100%;
+            min-height: 7rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
         margin-bottom: 3rem;
     }

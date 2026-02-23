@@ -1,7 +1,6 @@
 import type { QuizModule } from './types.js';
 
 import { parse, simplify, simplifyCore, symbolicEqual, simplifyConstant } from 'mathjs';
-import { fractionMath } from './math';
 
 import quizModule_5_1 from './quizzes/quiz_5_1.js';
 import quizModule_6_1 from './quizzes/quiz_6_1.js';
@@ -9,6 +8,7 @@ import quizModule_6_2 from './quizzes/quiz_6_2.js';
 import quizModule_7_3 from './quizzes/quiz_7_3.js';
 import quizModule_7_4 from './quizzes/quiz_7_4.js';
 import quizModule_7_5 from './quizzes/quiz_7_5.js';
+import quizModule_7_6 from './quizzes/quiz_7_6.js';
 
 export const quizModuleMap: Map<number, Map<number, QuizModule>> = new Map([
     [5, new Map([
@@ -21,7 +21,8 @@ export const quizModuleMap: Map<number, Map<number, QuizModule>> = new Map([
     [7, new Map([
         [3, quizModule_7_3],
         [4, quizModule_7_4],
-        [5, quizModule_7_5]
+        [5, quizModule_7_5],
+        [6, quizModule_7_6]
     ])]
 ]);
 
