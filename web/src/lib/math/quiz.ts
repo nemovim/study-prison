@@ -48,7 +48,7 @@ export function isCorrect(userAnswer: string, quizAnswer: string): boolean {
 
         userAnswer = simplifyCore(userAnswer.replace(/([a-zA-Z])(?=[a-zA-Z])/g, '$1*')).toString();
 
-        const isSimplified = userAnswer.split(/\+|-/).length === simplify(userAnswer).toString().split(/\+|-/).length;
+        const isSimplified = userAnswer.split(/(?<![eE])[+-]/).length === simplify(userAnswer).toString().split(/(?<![eE])[+-]/).length;
 
         const isReduced = parse(userAnswer).toString() === simplifyConstant(userAnswer).toString() || parse(userAnswer).toString() === simplifyConstant(userAnswer, { exactFractions: false }).toString();
 

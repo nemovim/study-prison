@@ -13,7 +13,7 @@ const quizConfigs = {
     // [4-6] 기초 분수/소수 곱셈
     4: { termCnt: 2, numMin: -1.2, numMax: 1.2, denMin: 1, denMax: 1, precision: 1 },
     5: { termCnt: 2, numMin: -5, numMax: 5, denMin: 2, denMax: 5, precision: 0 },
-    6: { termCnt: 2, numMin: -0.19, numMax: 0.19, denMin: 1, denMax: 1, precision: 2 },
+    6: { termCnt: 2, numMin: -0.15, numMax: 0.15, denMin: 1, denMax: 1, precision: 2 },
 
     // [7-9] 심화 및 혼합 계산
     7: { termCnt: 3, numMin: -4, numMax: 4, denMin: 2, denMax: 6, precision: 0 },
@@ -63,7 +63,7 @@ function makeQuiz(level: number): { quiz: string, answer: string } {
 
     let answer = isFractionOutput
         ? fractionMath.simplify(fullExpr).toString()
-        : decimalMath.simplify(fullExpr, {}, { exactFractions: false }).toString();
+        : decimalMath.format(decimalMath.simplify(fullExpr, {}, { exactFractions: false }), {notation: 'fixed'}).toString();
 
     return { quiz: expressions.join(' \\times '), answer: answer };
 }

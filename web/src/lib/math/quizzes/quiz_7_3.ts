@@ -75,7 +75,7 @@ function makeQuiz(level: number): { quiz: string, answer: string } {
 
     let answer = isFractionOutput
         ? fractionMath.simplify(fullExpr).toString()
-        : decimalMath.simplify(fullExpr, {}, { exactFractions: false }).toString();
+        : decimalMath.format(decimalMath.simplify(fullExpr, {}, { exactFractions: false }), {notation: 'fixed'}).toString();
 
     return { quiz: expressions.join('').trim(), answer: answer };
 }
