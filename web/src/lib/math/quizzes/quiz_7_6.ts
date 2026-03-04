@@ -3,29 +3,38 @@ import type { QuizModule } from '../types.js';
 import { fractionMath } from '../math.js';
 
 const quizConfigs = {
-    // [Level 1] 단항식과 수의 곱셈 (기초)
-    // 예: 2x * 3, -4 * 2a
+    // [Level 1] 단항식과 수의 곱/나눗셈
+    // 3 * 2x, -8a / 4
     1: { termCnt: 1, hasParenthesis: false, varCount: 1, denMax: 1, numMin: -9, numMax: 9 },
 
-    // [Level 2] 단항식과 수의 나눗셈 (정수 결과)
-    // 예: 6x / 2, -10a / 5
-    2: { termCnt: 1, hasParenthesis: false, varCount: 1, denMax: 1, numMin: 2, numMax: 5 },
+    // [Level 2] 동류항의 가감 (문자 1개)
+    // 5x + 2x, 3x - 7x
+    2: { termCnt: 2, hasParenthesis: false, varCount: 1, denMax: 1, numMin: 1, numMax: 12 },
 
-    // [Level 3] 동류항의 덧셈과 뺄셈 (가장 기본)
-    // 예: 3x + 2x, 7a - 5a (상수항 없음)
-    3: { termCnt: 2, hasParenthesis: false, varCount: 1, denMax: 1, numMin: 1, numMax: 10 },
+    // [Level 3] 일차식의 가감 (항 3개 = 문자1개 + 상수항 자연 포함)
+    // 2x + 5 - 4x  -> 정답: -2x + 5
+    3: { termCnt: 3, hasParenthesis: false, varCount: 1, denMax: 1, numMin: -9, numMax: 9 },
 
-    // [Level 4] 일차식의 덧셈과 뺄셈 (상수항 포함)
-    // 예: 2x + 1 + 3x - 5 (괄호 없음)
-    4: { termCnt: 4, hasParenthesis: false, varCount: 1, denMax: 1, numMin: -9, numMax: 9 },
+    // [Level 4] 문자 2개 혼합 가감 (항 4개 = 문자2개 + 상수항 자연 포함)
+    // 3x - 2y + 5 + x  -> 정답: 4x - 2y + 5
+    // *여기서 상수항이 하나쯤 끼어들면 딱이죠.
+    4: { termCnt: 4, hasParenthesis: false, varCount: 2, denMax: 1, numMin: -8, numMax: 8 },
 
-    // [Level 5] 괄호가 있는 일차식의 가감 (분배법칙 기초)
-    // 예: 2(x + 3) + (x - 1)
-    5: { termCnt: 2, hasParenthesis: true, varCount: 1, denMax: 1, numMin: -5, numMax: 5 },
+    // [Level 5] 괄호 1개 기초 (분배법칙)
+    // 2(x - 3), -3(2a + 4)
+    5: { termCnt: 1, hasParenthesis: true, parenCount: 1, varCount: 1, denMax: 1, numMin: -6, numMax: 6 },
 
-    // [Level 6] 일차식의 혼합 계산 (분수 계수 약간 포함)
-    // 예: 3(x - 2) - 2(2x + 1)
-    6: { termCnt: 2, hasParenthesis: true, varCount: 1, denMax: 2, numMin: -4, numMax: 4 },
+    // [Level 6] 괄호 2개 혼합 (문자 1개)
+    // 3(x + 2) + 2(x - 1)
+    6: { termCnt: 2, hasParenthesis: true, parenCount: 2, varCount: 1, denMax: 1, numMin: -5, numMax: 5 },
+
+    // [Level 7] 분수 계수 약분형
+    // 1/2(4x - 8), (6a + 9) / 3
+    7: { termCnt: 1, hasParenthesis: true, parenCount: 1, varCount: 1, denMax: 4, numMin: -8, numMax: 8 },
+
+    // [Level 8] 문자 2개 + 괄호 혼합 (최종)
+    // 2(x - 3y + 1) - (2x + y)
+    8: { termCnt: 2, hasParenthesis: true, parenCount: 2, varCount: 2, denMax: 1, numMin: -4, numMax: 4 },
 } as const;
 
 const maxLevel = Object.keys(quizConfigs).length;
@@ -52,78 +61,104 @@ function formatAddition(tex: string, isFirst: boolean): string {
 
 function makeQuiz(level: number): { quiz: string, answer: string } {
     const [activeLevel, config] = getQuizConfig(level, quizConfigs);
-    const variable = getRandomSymbol(1, 2); // x 혹은 y 사용
-    const allTerms: { coeff: string; varName: string; key: string }[] = [];
-    const quizParts: string[] = [];
-
-    // [Level 1 & 2] 단항식 곱셈/나눗셈 특화 로직
-    if (activeLevel === 1) {
-        const a = getRandomInt(config.numMin, config.numMax || 9);
-        const b = getRandomInt(2, 9);
-        if (a === 0) return makeQuiz(level);
-        return { quiz: `${formatTerm(a.toString(), variable)} \\times ${b}`, answer: formatTerm((a * b).toString(), variable) };
+    
+    // 1. 사용할 문자들 결정 (varCount에 따라 x, y 등 선택)
+    // varCount가 2면 ['x', 'y'], 1이면 ['x'] (또는 랜덤 한 개)
+    const selectedVars: string[] = [];
+    if (config.varCount === 1) {
+        selectedVars.push(getRandomSymbol(1, 4)); // x, y, z, a 중 하나
+    } else {
+        selectedVars.push('x', 'y'); // 문자 2개 레벨은 표준 x, y 사용
     }
     
-    if (activeLevel === 2) {
-        const b = getRandomInt(2, 5);
-        const ansNum = getRandomInt(-5, 5);
-        if (ansNum === 0) return makeQuiz(level);
-        const a = ansNum * b; // 항상 나누어 떨어지도록 설정
-        return { quiz: `${formatTerm(a.toString(), variable)} \\div ${b}`, answer: formatTerm(ansNum.toString(), variable) };
-    }
+    const quizParts: string[] = [];
+    const allTerms: { coeff: string; key: string }[] = [];
 
-    // [Level 3~6] 일차식의 가감 및 혼합 계산
-    const groupCount = config.hasParenthesis ? config.termCnt : 1;
+    // --- [Case 1] 괄호 없는 단순 나열 (Level 1~4) ---
+    if (!config.hasParenthesis) {
+        if (activeLevel === 1) {
+            const v = selectedVars[0];
+            const a = getRandomInt(config.numMin, config.numMax);
+            const b = getRandomInt(2, 9);
+            return { quiz: `${formatTerm(a.toString(), v)} \\times ${b}`, answer: formatTerm((a * b).toString(), v) };
+        }
+        if (activeLevel === 2) {
+            const v = selectedVars[0];
+            const b = getRandomInt(2, 5);
+            const ansNum = getRandomInt(-5, 5);
+            return { quiz: `${formatTerm((ansNum * b).toString(), v)} \\div ${b}`, answer: formatTerm(ansNum.toString(), v) };
+        }
 
-    for (let g = 0; g < groupCount; g++) {
-        if (config.hasParenthesis) {
-            // --- 괄호가 있는 경우 (분배법칙) ---
-            let outNum = getRandomInt(config.numMin, config.numMax);
-            // Level 5에서는 괄호 앞이 +1인 경우도 포함하여 난이도 조절
-            while (outNum === 0 || (activeLevel === 6 && outNum === 1)) outNum = getRandomInt(config.numMin, config.numMax);
+        // Level 3, 4: 항들을 섞어서 생성
+        const pool = [...selectedVars, '']; // ''은 상수항(const)을 의미
+        for (let i = 0; i < config.termCnt; i++) {
+            // 최소한 지정된 문자들은 한 번씩 나오게 보장
+            const type = i < selectedVars.length ? selectedVars[i] : pool[getRandomInt(0, pool.length - 1)];
+            const n = getRandomInt(config.numMin, config.numMax);
             
-            const inVarNum = getRandomInt(-5, 5);
-            const inConstNum = getRandomInt(-5, 5);
-            if (inVarNum === 0 && inConstNum === 0) { g--; continue; }
-
-            allTerms.push({ coeff: `(${outNum}*${inVarNum})`, varName: variable, key: variable });
-            allTerms.push({ coeff: `(${outNum}*${inConstNum})`, varName: '', key: 'const' });
-
-            const inVarTex = formatTerm(inVarNum.toString(), variable);
-            const inConstTex = inConstNum.toString();
-            const innerExpr = `${inVarTex}${formatAddition(inConstTex, inVarTex === '')}`;
+            allTerms.push({ coeff: n.toString(), key: type || 'const' });
+            quizParts.push(formatAddition(formatTerm(n.toString(), type), quizParts.length === 0));
+        }
+    } 
+    // --- [Case 2] 괄호가 있는 경우 (Level 5~8) ---
+    else {
+        const groupCount = config.parenCount || 1;
+        for (let g = 0; g < groupCount; g++) {
+            let outNumStr: string;
             
-            if (outNum === 1) quizParts.push(`${g === 0 ? '' : ' + '}\\left(${innerExpr}\\right)`);
-            else if (outNum === -1) quizParts.push(`${g === 0 ? '' : ' '}-\\left(${innerExpr}\\right)`);
-            else quizParts.push(`${formatAddition(outNum.toString(), g === 0)}\\left(${innerExpr}\\right)`);
-        } else {
-            // --- 괄호가 없는 경우 (단순 나열) ---
-            for (let i = 0; i < config.termCnt; i++) {
-                const isVar = activeLevel === 3 ? true : (i % 2 === 0);
-                const vName = isVar ? variable : '';
+            // Level 7: 분수 계수 (약분되는 형태 유도)
+            if (activeLevel === 7) {
+                const den = getRandomInt(2, config.denMax || 4);
+                outNumStr = `1/${den}`;
+            } else {
                 let n = getRandomInt(config.numMin, config.numMax);
-                while (n === 0) n = getRandomInt(config.numMin, config.numMax);
-                
-                allTerms.push({ coeff: `(${n}/1)`, varName: vName, key: vName || 'const' });
-                quizParts.push(formatAddition(formatTerm(n.toString(), vName), quizParts.length === 0));
+                // Level 6 이상에서 첫 항이 1이면 심심하므로 -1로 바꾸거나 재추출
+                if (activeLevel >= 6 && n === 1 && g === 0) n = -1;
+                outNumStr = n.toString();
             }
+
+            // 괄호 안 구성: 문자(들) + 상수항 1개
+            const innerTerms: { n: number, v: string }[] = [];
+            selectedVars.forEach(v => innerTerms.push({ n: getRandomInt(-5, 5), v }));
+            innerTerms.push({ n: getRandomInt(-5, 5), v: '' }); // 상수항 추가
+
+            // Level 7 약분 보정: 괄호 안의 숫자를 분모의 배수로
+            if (activeLevel === 7) {
+                const den = parseInt(outNumStr.split('/')[1]);
+                innerTerms.forEach(t => t.n *= den);
+            }
+
+            // 괄호 수식 텍스트 생성
+            const innerTex = innerTerms
+                .map((t, idx) => formatAddition(formatTerm(t.n.toString(), t.v), idx === 0))
+                .join('');
+            
+            const outTex = outNumStr === '1' ? '' : (outNumStr === '-1' ? '-' : getCleanTex(outNumStr, 'F'));
+            quizParts.push(`${formatAddition(outTex, g === 0)}\\left(${innerTex}\\right)`);
+
+            // 정답 계산 데이터 저장
+            innerTerms.forEach(t => {
+                allTerms.push({ coeff: `(${outNumStr}*${t.n})`, key: t.v || 'const' });
+            });
         }
     }
 
-    // 정답 계산 (동류항 끼리끼리)
-    const keys = [variable, 'const'];
-    let finalAnswerParts: string[] = [];
-    keys.forEach(key => {
-        const same = allTerms.filter(t => t.key === key);
-        if (same.length === 0) return;
-        const res = fractionMath.simplify(same.map(t => t.coeff).join('+')).toString();
+    // --- 정답 합산 (x항, y항, 상수항 순서로 정리) ---
+    const finalKeys = [...selectedVars, 'const'];
+    let answerParts: string[] = [];
+    
+    finalKeys.forEach(key => {
+        const sameType = allTerms.filter(t => t.key === key);
+        if (sameType.length === 0) return;
+        
+        const res = fractionMath.simplify(sameType.map(t => t.coeff).join('+')).toString();
         if (res !== '0') {
             const tex = getCleanTex(res, 'F');
-            finalAnswerParts.push(key === 'const' ? tex : formatTerm(tex, variable));
+            answerParts.push(key === 'const' ? tex : formatTerm(tex, key));
         }
     });
 
-    const answer = finalAnswerParts.length === 0 ? '0' : finalAnswerParts.reduce((acc, cur, idx) => {
+    const answer = answerParts.length === 0 ? '0' : answerParts.reduce((acc, cur, idx) => {
         if (idx === 0) return cur;
         return cur.startsWith('-') ? acc + cur : acc + '+' + cur;
     }, '');

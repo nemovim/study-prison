@@ -35,6 +35,17 @@ export function getQuizModule(grade: number, section: number): QuizModule | null
     return quizModuleMap.get(grade)?.get(section) ?? null;
 }
 
+// 항(term) 추출 정규식 설명:
+// 1. (?:(?<![eE])[+-]|^) : 'e' 뒤에 오지 않는 + 또는 - 부호, 혹은 문자열의 시작
+// 2. [^+-]+ : 그 뒤에 +나 -가 아닌 문자들(숫자, 문자, /, . 등)이 하나 이상 연속됨
+const termPattern = /(?:(?<![eE])[+-]|^)[^+-]+/g;
+
+function getTermCount(str: string): number {
+    const cleaned = str.replace(/\s+/g, ""); // 공백 제거
+    const matches = cleaned.match(termPattern);
+    return matches ? matches.length : 0;
+}
+
 export function isCorrect(userAnswer: string, quizAnswer: string): boolean {
     if (!userAnswer) return false;
 
@@ -48,7 +59,10 @@ export function isCorrect(userAnswer: string, quizAnswer: string): boolean {
 
         userAnswer = simplifyCore(userAnswer.replace(/([a-zA-Z])(?=[a-zA-Z])/g, '$1*')).toString();
 
-        const isSimplified = userAnswer.split(/(?<![eE])[+-]/).length === simplify(userAnswer).toString().split(/(?<![eE])[+-]/).length;
+        console.log(userAnswer)
+        console.log(simplify(userAnswer).toString())
+
+        const isSimplified = getTermCount(userAnswer) === getTermCount(simplify(userAnswer).toString());
 
         const isReduced = parse(userAnswer).toString() === simplifyConstant(userAnswer).toString() || parse(userAnswer).toString() === simplifyConstant(userAnswer, { exactFractions: false }).toString();
 
