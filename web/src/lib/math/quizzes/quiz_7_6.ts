@@ -106,37 +106,54 @@ function makeQuiz(level: number): { quiz: string, answer: string } {
         for (let g = 0; g < groupCount; g++) {
             let outNumStr: string;
             
-            // Level 7: 분수 계수 (약분되는 형태 유도)
+            // 1. 괄호 밖 계수 결정
             if (activeLevel === 7) {
-                const den = getRandomInt(2, config.denMax || 4);
+                const den = getRandomInt(2, config.denMax || 4, false);
                 outNumStr = `1/${den}`;
             } else {
-                let n = getRandomInt(config.numMin, config.numMax);
-                // Level 6 이상에서 첫 항이 1이면 심심하므로 -1로 바꾸거나 재추출
-                if (activeLevel >= 6 && n === 1 && g === 0) n = -1;
+                let n = getRandomInt(config.numMin, config.numMax, false);
+                // Level 6 이상에서 두 번째 괄호 계수가 1인 경우도 처리하기 위해 n 유지
                 outNumStr = n.toString();
             }
 
-            // 괄호 안 구성: 문자(들) + 상수항 1개
+            // 2. 괄호 안 구성: 문자(들) + 상수항 1개
             const innerTerms: { n: number, v: string }[] = [];
-            selectedVars.forEach(v => innerTerms.push({ n: getRandomInt(-5, 5), v }));
-            innerTerms.push({ n: getRandomInt(-5, 5), v: '' }); // 상수항 추가
+            selectedVars.forEach(v => innerTerms.push({ n: getRandomInt(-5, 5, false), v }));
+            innerTerms.push({ n: getRandomInt(-5, 5, false), v: '' }); 
 
-            // Level 7 약분 보정: 괄호 안의 숫자를 분모의 배수로
+            // Level 7 약분 보정
             if (activeLevel === 7) {
                 const den = parseInt(outNumStr.split('/')[1]);
                 innerTerms.forEach(t => t.n *= den);
             }
 
-            // 괄호 수식 텍스트 생성
+            // 3. 괄호 안 수식 텍스트 생성
             const innerTex = innerTerms
                 .map((t, idx) => formatAddition(formatTerm(t.n.toString(), t.v), idx === 0))
                 .join('');
-            
-            const outTex = outNumStr === '1' ? '' : (outNumStr === '-1' ? '-' : getCleanTex(outNumStr, 'F'));
-            quizParts.push(`${formatAddition(outTex, g === 0)}\\left(${innerTex}\\right)`);
 
-            // 정답 계산 데이터 저장
+            // 4. 괄호 밖 계수 및 연산자 텍스트 생성 (핵심 수정 구간)
+            let currentPart = "";
+            const isFirst = (g === 0);
+            
+            if (outNumStr === "1") {
+                currentPart = isFirst ? `\\left(${innerTex}\\right)` : ` + \\left(${innerTex}\\right)`;
+            } else if (outNumStr === "-1") {
+                currentPart = isFirst ? `-\\left(${innerTex}\\right)` : ` - \\left(${innerTex}\\right)`;
+            } else {
+                const outTex = getCleanTex(outNumStr, 'F');
+                // 양수이면서 첫 번째가 아니면 앞에 + 기호 강제 추가
+                if (!isFirst && !outNumStr.startsWith('-')) {
+                    currentPart = ` + ${outTex}\\left(${innerTex}\\right)`;
+                } else {
+                    // 음수거나 첫 번째 항이면 formatAddition 스타일로 처리 (공백 포함)
+                    currentPart = `${formatAddition(outTex, isFirst)}\\left(${innerTex}\\right)`;
+                }
+            }
+            
+            quizParts.push(currentPart);
+
+            // 5. 정답 계산 데이터 저장 (동일)
             innerTerms.forEach(t => {
                 allTerms.push({ coeff: `(${outNumStr}*${t.n})`, key: t.v || 'const' });
             });
